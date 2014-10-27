@@ -19,7 +19,8 @@ View注入已移除，请使用AndroidAnnonations
 
 使用方法：
 -----
-PLib是一个Library项目，将它引入到你的项目中，Application继承PApplication,所有Activity继承PActivity或PFragmentActivity,所有Fragment继承PFragment或PDialogFragment.
+PLib是一个Library项目，将它引入到你的项目中，Application继承PApplication,所有Activity继承PActivity或PFragmentActivity,所有Fragment继承PFragment或PDialogFragment.<br />
+当前版本的PLib使用比Eclipse更为优秀的AndroidStudio创建,是Gradle项目。
 
 
 **1.SharedPreference封装** <br/>
