@@ -1,7 +1,6 @@
 package com.pocketdigi.plib.core;
 
 import android.util.Log;
-import com.pocketdigi.plib.BuildConfig;
 
 /**
  * Log类，在正式包中不会输出Log
