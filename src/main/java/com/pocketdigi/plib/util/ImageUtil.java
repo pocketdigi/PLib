@@ -329,7 +329,7 @@ public class ImageUtil {
     }
 
     /**
-     * 计算真实尺寸
+     * 计算sampleSize
      *
      * @param bmpSize
      * @param maxWidth

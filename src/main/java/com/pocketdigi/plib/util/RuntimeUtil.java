@@ -1,7 +1,11 @@
 package com.pocketdigi.plib.util;
 
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
+
 import com.pocketdigi.plib.core.PApplication;
 
 /**
@@ -88,5 +92,20 @@ public class RuntimeUtil {
             e.printStackTrace(System.err);
         }
         return versionCode;
+    }
+
+    /**
+     * 屏幕屏幕尺寸数组，第一个是宽，第二个是高
+     * @return
+     */
+    public static int[] getScreenSize()
+    {
+        WindowManager windowManager=(WindowManager)PApplication.getInstance().getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics displayMetrics=new DisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+        int[] size=new int[2];
+        size[0]=displayMetrics.widthPixels;
+        size[1]=displayMetrics.heightPixels;
+        return size;
     }
 }
