@@ -33,12 +33,6 @@ public abstract class PFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    @AfterViews
-    public void afterViews() {
-        PLog.d(this, "afterViews");
-    }
-
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();

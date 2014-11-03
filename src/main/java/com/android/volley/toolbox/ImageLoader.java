@@ -42,19 +42,19 @@ import java.util.LinkedList;
  */
 public class ImageLoader {
     /** RequestQueue for dispatching ImageRequests onto. */
-    private final RequestQueue mRequestQueue;
+    protected final RequestQueue mRequestQueue;
 
     /** Amount of time to wait after first response arrives before delivering all responses. */
     private int mBatchResponseDelayMs = 100;
 
     /** The cache implementation to be used as an L1 cache before calling into volley. */
-    private final ImageCache mCache;
+    protected final ImageCache mCache;
 
     /**
      * HashMap of Cache keys -> BatchedImageRequest used to track in-flight requests so
      * that we can coalesce multiple requests to the same URL into a single network request.
      */
-    private final HashMap<String, BatchedImageRequest> mInFlightRequests =
+    public final HashMap<String, BatchedImageRequest> mInFlightRequests =
             new HashMap<String, BatchedImageRequest>();
 
     /** HashMap of the currently pending responses (waiting to be delivered). */
@@ -250,7 +250,7 @@ public class ImageLoader {
      * @param cacheKey The cache key that is associated with the image request.
      * @param response The bitmap that was returned from the network.
      */
-    private void onGetImageSuccess(String cacheKey, Bitmap response) {
+    public void onGetImageSuccess(String cacheKey, Bitmap response) {
         // cache the image that was fetched.
         mCache.putBitmap(cacheKey, response);
 
@@ -270,7 +270,7 @@ public class ImageLoader {
      * Handler for when an image failed to load.
      * @param cacheKey The cache key that is associated with the image request.
      */
-    private void onGetImageError(String cacheKey, VolleyError error) {
+    public void onGetImageError(String cacheKey, VolleyError error) {
         // Notify the requesters that something failed via a null result.
         // Remove this request from the list of in-flight requests.
         BatchedImageRequest request = mInFlightRequests.remove(cacheKey);
@@ -292,9 +292,9 @@ public class ImageLoader {
          * The most relevant bitmap for the container. If the image was in cache, the
          * Holder to use for the final bitmap (the one that pairs to the requested URL).
          */
-        private Bitmap mBitmap;
+        public Bitmap mBitmap;
 
-        private final ImageListener mListener;
+        public final ImageListener mListener;
 
         /** The cache key that was associated with the request */
         private final String mCacheKey;
@@ -361,7 +361,7 @@ public class ImageLoader {
      * Wrapper class used to map a Request to the set of active ImageContainer objects that are
      * interested in its results.
      */
-    private class BatchedImageRequest {
+    protected class BatchedImageRequest {
         /** The request being tracked */
         private final Request<?> mRequest;
 

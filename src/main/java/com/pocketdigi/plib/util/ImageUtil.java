@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -347,8 +348,16 @@ public class ImageUtil {
      * @return
      */
     private static int getSampleSize(int[] bmpSize, int maxWidth, int maxHeight) {
-        float realWidth = bmpSize[0];
-        float realHeight = bmpSize[1];
+        int realWidth = bmpSize[0];
+        int realHeight = bmpSize[1];
+        return getSampleSize(realWidth,realHeight,maxWidth,maxHeight);
+    }
+    /**
+     * 计算sampleSize
+     * @return
+     */
+    private static int getSampleSize(int realWidth,int realHeight,int maxWidth,int maxHeight)
+    {
         // 如果图片尺寸比最大值小，直接返回
         if (maxWidth > realWidth && maxHeight > realHeight) {
             return 1;
@@ -408,6 +417,46 @@ public class ImageUtil {
         options.inSampleSize = inSampleSize;
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId, options);
         return bitmap;
+    }
+
+    /**
+     * 压缩图片，使用sampleSize，因为是int所有有误差
+     * @param bmp
+     * @param maxWidth
+     * @param maxHeight
+     * @return
+     */
+    public static Bitmap compressBitmap(Bitmap bmp,int maxWidth,int maxHeight)
+    {
+        float scale=getCompressScale(bmp.getWidth(),bmp.getHeight(),maxWidth,maxHeight);
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale,scale); //长和宽放大缩小的比例
+        Bitmap resizeBmp= Bitmap.createBitmap(bmp,0,0,bmp.getWidth(),bmp.getHeight(),matrix,true);
+        bmp.recycle();
+        return resizeBmp;
+    }
+
+    /**
+     * 获取压缩比例，返回的是小于1的浮点数，只能用于缩小，不能放大
+     * @param realWidth
+     * @param realHeight
+     * @param maxWidth
+     * @param maxHeight
+     * @return
+     */
+    private static float getCompressScale(int realWidth,int realHeight,int maxWidth,int maxHeight)
+    {
+        // 如果图片尺寸比最大值小，直接返回
+        if (maxWidth > realWidth && maxHeight > realHeight) {
+            return 1;
+        }
+        float widthScale=(float)maxWidth/realWidth;
+        float heightScale=(float)maxHeight/realHeight;
+        if(widthScale<1&&heightScale<1)
+        {
+            return Math.max(widthScale,heightScale);
+        }
+        return 1;
     }
 
     /**
