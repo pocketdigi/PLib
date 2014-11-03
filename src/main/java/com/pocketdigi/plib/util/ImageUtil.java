@@ -2,13 +2,23 @@ package com.pocketdigi.plib.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.annotation.DrawableRes;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 
 /**
  * 图片处理util
@@ -20,9 +30,10 @@ public class ImageUtil {
     /**
      * Android api 17实现的虚化
      * 某些机型上可能会Crash
+     *
      * @param context
      * @param sentBitmap
-     * @param radius 大于1小于等于25
+     * @param radius     大于1小于等于25
      * @return
      */
     @SuppressLint("NewApi")
@@ -271,10 +282,8 @@ public class ImageUtil {
     /**
      * 从文件解析出图片，可以是缩略图
      *
-     * @param filePath
-     *            　文件路径
-     * @param inSampleSize
-     *            　缩小系数，1为原图,如果是2,宽高均为原图的1/2,类推
+     * @param filePath     　文件路径
+     * @param inSampleSize 　缩小系数，1为原图,如果是2,宽高均为原图的1/2,类推
      * @return
      */
     public static Bitmap decodeFromFile(String filePath, int inSampleSize) {
@@ -318,6 +327,7 @@ public class ImageUtil {
 
     /**
      * 通过最大高宽度计算SampleSize
+     *
      * @param maxWidth
      * @param maxHeight
      * @return
@@ -360,10 +370,8 @@ public class ImageUtil {
      * 从文件解析出图片，可以是缩略图
      *
      * @param filePath
-     * @param maxWidth
-     *            缩略图最大宽度
-     * @param maxHeight
-     *            　缩略图最大高度
+     * @param maxWidth  缩略图最大宽度
+     * @param maxHeight 　缩略图最大高度
      * @return
      */
     public static Bitmap decodeFromFile(String filePath, int maxWidth, int maxHeight) {
@@ -430,5 +438,88 @@ public class ImageUtil {
         size[1] = options.outHeight;
         return size;
     }
+
+    /**
+     * 从内置图片资源，生成圆角或圆形图片
+     *
+     * @param res
+     * @param resId  图片的资源id
+     * @param radius 圆角半径，当半径为宽高中最大值的一半时，是圆形图片
+     * @return
+     */
+    public static RoundedBitmapDrawable toRoundDrawable(Resources res, int resId, float radius) {
+        Bitmap src = BitmapFactory.decodeResource(res, resId);
+        return toRoundDrawable(res, src, radius);
+    }
+
+    /**
+     * 从本地图片，生成圆角或圆形图片
+     *
+     * @param res
+     * @param filePath 图片的文件路径
+     * @param radius   圆角半径，当半径为宽高中最大值的一半时，是圆形图片
+     * @return
+     */
+    public static RoundedBitmapDrawable toRoundDrawable(Resources res, String filePath, float radius) {
+        RoundedBitmapDrawable roundedBitmapDrawable =
+                RoundedBitmapDrawableFactory.create(res, filePath);
+        //设置圆角半径
+        roundedBitmapDrawable.setCornerRadius(radius);
+        return roundedBitmapDrawable;
+    }
+
+    /**
+     * 从Bitmap，生成圆角或圆形图片
+     *
+     * @param res
+     * @param src  源图片
+     * @param radius 圆角半径，当半径为宽高中最大值的一半时，是圆形图片
+     * @return
+     */
+    public static RoundedBitmapDrawable toRoundDrawable(Resources res, Bitmap src, float radius) {
+        RoundedBitmapDrawable roundedBitmapDrawable =
+                RoundedBitmapDrawableFactory.create(res, src);
+        //设置圆角半径
+        roundedBitmapDrawable.setCornerRadius(radius);
+        return roundedBitmapDrawable;
+    }
+
+    /**
+     * 生成圆形图片
+     * @param res
+     * @param resId
+     * @return
+     */
+    public static RoundedBitmapDrawable toCircularDrawable(Resources res,int resId)
+    {
+        Bitmap src = BitmapFactory.decodeResource(res, resId);
+        return toRoundDrawable(res, src, Math.max(src.getWidth(), src.getHeight()) / 2.0f);
+    }
+    /**
+     * 生成圆形图片
+     * @param res
+     * @param src
+     * @return
+     */
+    public static RoundedBitmapDrawable toCircularDrawable(Resources res,Bitmap src)
+    {
+        return toRoundDrawable(res, src, Math.max(src.getWidth(), src.getHeight()) / 2.0f);
+    }
+    /**
+     * 生成圆形图片
+     * @param res
+     * @param filePath
+     * @return
+     */
+    public static RoundedBitmapDrawable toCircularDrawable(Resources res,String filePath)
+    {
+        RoundedBitmapDrawable roundedBitmapDrawable =
+                RoundedBitmapDrawableFactory.create(res, filePath);
+        Bitmap bmp=roundedBitmapDrawable.getBitmap();
+        //设置圆角半径
+        roundedBitmapDrawable.setCornerRadius(Math.max(bmp.getWidth(), bmp.getHeight()) / 2.0f);
+        return roundedBitmapDrawable;
+    }
+
 
 }
