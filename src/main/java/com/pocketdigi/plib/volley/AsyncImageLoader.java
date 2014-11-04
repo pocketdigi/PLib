@@ -161,12 +161,14 @@ public class AsyncImageLoader extends ImageLoader{
                     @Override
                     public void run() {
                         for (ReadCacheRequest cacheRequest : cacheMap.values()) {
-                            for (ImageContainer container : cacheRequest.mContainers) {
-                                if (container.mListener == null) {
-                                    continue;
+                            if (cacheRequest != null) {
+                                for (ImageContainer container : cacheRequest.mContainers) {
+                                    if (container.mListener == null) {
+                                        continue;
+                                    }
+                                    container.mBitmap = cacheRequest.getCacheBitmap();
+                                    container.mListener.onResponse(container, false);
                                 }
-                                container.mBitmap = cacheRequest.getCacheBitmap();
-                                container.mListener.onResponse(container, false);
                             }
                         }
                         cacheMap.clear();
