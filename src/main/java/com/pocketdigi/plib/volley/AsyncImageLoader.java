@@ -54,7 +54,7 @@ public class AsyncImageLoader extends ImageLoader{
         if(instance==null) {
             requestQueue=Volley.newRequestQueue(PApplication.getInstance());
             requestQueue.start();
-            instance = new AsyncImageLoader(requestQueue, new L2LRUImageCache());
+            instance = new AsyncImageLoader(requestQueue, new L2LRUImageCache(PApplication.getInstance()));
         }
         return instance;
     }

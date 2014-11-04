@@ -350,14 +350,15 @@ public class ImageUtil {
     private static int getSampleSize(int[] bmpSize, int maxWidth, int maxHeight) {
         int realWidth = bmpSize[0];
         int realHeight = bmpSize[1];
-        return getSampleSize(realWidth,realHeight,maxWidth,maxHeight);
+        return getSampleSize(realWidth, realHeight, maxWidth, maxHeight);
     }
+
     /**
      * 计算sampleSize
+     *
      * @return
      */
-    private static int getSampleSize(int realWidth,int realHeight,int maxWidth,int maxHeight)
-    {
+    private static int getSampleSize(int realWidth, int realHeight, int maxWidth, int maxHeight) {
         // 如果图片尺寸比最大值小，直接返回
         if (maxWidth > realWidth && maxHeight > realHeight) {
             return 1;
@@ -421,40 +422,46 @@ public class ImageUtil {
 
     /**
      * 压缩图片，使用sampleSize，因为是int所有有误差
+     *
      * @param bmp
      * @param maxWidth
      * @param maxHeight
      * @return
      */
-    public static Bitmap compressBitmap(Bitmap bmp,int maxWidth,int maxHeight)
-    {
-        float scale=getCompressScale(bmp.getWidth(),bmp.getHeight(),maxWidth,maxHeight);
+    public static Bitmap compressBitmap(Bitmap bmp, int maxWidth, int maxHeight) {
+        float scale = getCompressScale(bmp.getWidth(), bmp.getHeight(), maxWidth, maxHeight);
         Matrix matrix = new Matrix();
-        matrix.postScale(scale,scale); //长和宽放大缩小的比例
-        Bitmap resizeBmp= Bitmap.createBitmap(bmp,0,0,bmp.getWidth(),bmp.getHeight(),matrix,true);
-        bmp.recycle();
+        matrix.postScale(scale, scale); //长和宽放大缩小的比例
+        Bitmap resizeBmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+        /**
+         * 实测 Galaxy nexus Android 4.3上,bmp和resizeBmp是不同对象
+         * 但 在Nexus 7 2013 Android 4.4.4上，bmp和resizeBmp是同一个对象
+         * 不确定createBitmap从哪个版本开始更改
+         */
+        if (bmp != resizeBmp) {
+            bmp.recycle();
+        }
         return resizeBmp;
     }
 
     /**
      * 获取压缩比例，返回的是小于1的浮点数，只能用于缩小，不能放大
+     *
      * @param realWidth
      * @param realHeight
      * @param maxWidth
      * @param maxHeight
      * @return
      */
-    private static float getCompressScale(int realWidth,int realHeight,int maxWidth,int maxHeight)
-    {
+    private static float getCompressScale(int realWidth, int realHeight, int maxWidth, int maxHeight) {
         // 如果图片尺寸比最大值小，直接返回
         if (maxWidth > realWidth && maxHeight > realHeight) {
             return 1;
         }
-        float widthScale=(float)maxWidth/realWidth;
-        float heightScale=(float)maxHeight/realHeight;
-        if(widthScale<1&&heightScale<1)
-        {
-            return Math.max(widthScale,heightScale);
+        float widthScale = (float) maxWidth / realWidth;
+        float heightScale = (float) maxHeight / realHeight;
+        if (widthScale < 1 && heightScale < 1) {
+            return Math.max(widthScale, heightScale);
         }
         return 1;
     }
@@ -521,7 +528,7 @@ public class ImageUtil {
      * 从Bitmap，生成圆角或圆形图片
      *
      * @param res
-     * @param src  源图片
+     * @param src    源图片
      * @param radius 圆角半径，当半径为宽高中最大值的一半时，是圆形图片
      * @return
      */
@@ -535,36 +542,38 @@ public class ImageUtil {
 
     /**
      * 生成圆形图片
+     *
      * @param res
      * @param resId
      * @return
      */
-    public static RoundedBitmapDrawable toCircularDrawable(Resources res,int resId)
-    {
+    public static RoundedBitmapDrawable toCircularDrawable(Resources res, int resId) {
         Bitmap src = BitmapFactory.decodeResource(res, resId);
         return toRoundDrawable(res, src, Math.max(src.getWidth(), src.getHeight()) / 2.0f);
     }
+
     /**
      * 生成圆形图片
+     *
      * @param res
      * @param src
      * @return
      */
-    public static RoundedBitmapDrawable toCircularDrawable(Resources res,Bitmap src)
-    {
+    public static RoundedBitmapDrawable toCircularDrawable(Resources res, Bitmap src) {
         return toRoundDrawable(res, src, Math.max(src.getWidth(), src.getHeight()) / 2.0f);
     }
+
     /**
      * 生成圆形图片
+     *
      * @param res
      * @param filePath
      * @return
      */
-    public static RoundedBitmapDrawable toCircularDrawable(Resources res,String filePath)
-    {
+    public static RoundedBitmapDrawable toCircularDrawable(Resources res, String filePath) {
         RoundedBitmapDrawable roundedBitmapDrawable =
                 RoundedBitmapDrawableFactory.create(res, filePath);
-        Bitmap bmp=roundedBitmapDrawable.getBitmap();
+        Bitmap bmp = roundedBitmapDrawable.getBitmap();
         //设置圆角半径
         roundedBitmapDrawable.setCornerRadius(Math.max(bmp.getWidth(), bmp.getHeight()) / 2.0f);
         return roundedBitmapDrawable;

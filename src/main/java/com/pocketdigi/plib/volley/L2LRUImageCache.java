@@ -1,5 +1,6 @@
 package com.pocketdigi.plib.volley;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
@@ -7,6 +8,7 @@ import android.util.LruCache;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.jakewharton.disklrucache.DiskLruCache;
+import com.pocketdigi.plib.core.PApplication;
 import com.pocketdigi.plib.util.MD5Utils;
 
 import java.io.File;
@@ -25,7 +27,7 @@ public class L2LRUImageCache implements ImageLoader.ImageCache{
     String DISK_CACHE_DIR = "imageCache";
     final long DISK_MAX_SIZE = 20 * 1024 * 1024;
 
-    public L2LRUImageCache() {
+    public L2LRUImageCache(Context context) {
         this.lruCache = new LruCache<String, Bitmap>(RAM_CACHE_SIZE) {
             @Override
             protected int sizeOf(String key, Bitmap value) {
@@ -35,7 +37,8 @@ public class L2LRUImageCache implements ImageLoader.ImageCache{
 
         if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
         {
-            File cacheDir = new File(Environment.getExternalStorageDirectory(), DISK_CACHE_DIR);
+
+            File cacheDir = context.getExternalFilesDir(DISK_CACHE_DIR);;
             if(!cacheDir.exists())
             {
                 cacheDir.mkdir();
