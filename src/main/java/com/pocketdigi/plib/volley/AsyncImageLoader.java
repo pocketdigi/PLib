@@ -15,30 +15,27 @@ import com.pocketdigi.plib.core.PApplication;
 import com.pocketdigi.plib.util.ImageUtil;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 异步的ImageLoader
+ * 异步读本地缓存的ImageLoader
  * Created by fhp on 14/11/3.
  */
 public class AsyncImageLoader extends ImageLoader{
     /**
-     * 在取的，可能没取到
+     * 在取的请求，可能没取到
      */
-    HashMap<String, ReadCacheRequest> cacheRequestMap = new HashMap<String, ReadCacheRequest>();
-    /** 已经取到的bmp缓存 **/
-    HashMap<String, ReadCacheRequest> cacheMap = new HashMap<String, ReadCacheRequest>();
+    ConcurrentHashMap<String, ReadImageRequest> readImageRequestConcurrentHashMap = new ConcurrentHashMap<String, ReadImageRequest>();
     // 读数据线程池，限制两个线程
     private ExecutorService readExecutorService = new ThreadPoolExecutor(0, 2, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
     //UI线程的Handler
     Handler mainHandler;
-    //读完后分发
-    private Runnable deliveryRunnable;
-
     private static AsyncImageLoader instance;
+    //独立请求列队
     private static RequestQueue requestQueue;
     private AsyncImageLoader(RequestQueue queue, ImageCache imageCache) {
         super(queue, imageCache);
@@ -73,18 +70,19 @@ public class AsyncImageLoader extends ImageLoader{
         // TODO Auto-generated method stub
         throwIfNotOnMainThread();
         final String cacheKey = getCacheKey(requestUrl, maxWidth, maxHeight);
-        // The bitmap did not exist in the cache, fetch it!
-        ImageContainer imageContainer = new ImageContainer(null, requestUrl, cacheKey, imageListener);
-        ReadCacheRequest readCacheRequest=cacheRequestMap.get(cacheKey);
-        if(readCacheRequest==null){
-            readCacheRequest=new ReadCacheRequest(imageContainer, cacheKey);
-            cacheRequestMap.put(cacheKey, readCacheRequest);
-        }else{
-            readCacheRequest.addContainer(imageContainer);
-        }
 
-        imageListener.onResponse(imageContainer, true);
-        readExecutorService.execute(new ReadCache(imageContainer, cacheKey,maxWidth,maxHeight));
+        ImageContainer imageContainer = new ImageContainer(null, requestUrl, cacheKey, imageListener);
+        ReadImageRequest readImageRequest =readImageRequestConcurrentHashMap.get(cacheKey);
+
+        if(readImageRequest ==null){
+            readImageRequest =new ReadImageRequest(imageContainer, cacheKey);
+            readImageRequestConcurrentHashMap.put(cacheKey, readImageRequest);
+            //去读缓存，读不到会自动转到请求网络
+            readExecutorService.execute(new ReadCache(imageContainer, cacheKey,maxWidth,maxHeight));
+        }else{
+            //如果该请求已经存在，添加ImageContainer，不再发请求
+            readImageRequest.addContainer(imageContainer);
+        }
         return imageContainer;
     }
 
@@ -108,7 +106,7 @@ public class AsyncImageLoader extends ImageLoader{
     }
 
     /**
-     * 读取缓存
+     * 读取缓存，读不到会转发给网络
      */
     class ReadCache implements Runnable {
         ImageContainer container;
@@ -126,14 +124,13 @@ public class AsyncImageLoader extends ImageLoader{
             // TODO Auto-generated method stub
             Bitmap cachedBitmap = mCache.getBitmap(cacheKey);
             if (cachedBitmap != null) {
-                ReadCacheRequest cacheRequest = cacheRequestMap.get(cacheKey);
+                ReadImageRequest cacheRequest = readImageRequestConcurrentHashMap.get(cacheKey);
                 if (cacheRequest != null) {
                     cacheRequest.setCacheBitmap(cachedBitmap);
-                    mainHandler.post(new ReadCacheSuccess(cacheKey));
+                    readSuccess(cacheKey);
                 }
             } else {
                 // 读不到缓存，去下载
-                cacheRequestMap.remove(cacheKey);
                 mainHandler.post(new GetImageUseNetWork(container,cacheKey,maxWidth,maxHeight));
             }
 
@@ -141,44 +138,15 @@ public class AsyncImageLoader extends ImageLoader{
     }
 
     /**
-     * 成功读取缓存，分发
-     *
+     * 读取缓存或下载图片成功，分发结果
+     * @param cacheKey
      */
-    class ReadCacheSuccess implements Runnable {
-        String cacheKey;
-
-        public ReadCacheSuccess(String cacheKey) {
-            this.cacheKey = cacheKey;
+    private void readSuccess(String cacheKey)
+    {
+        ReadImageRequest successedCacheRequest = readImageRequestConcurrentHashMap.remove(cacheKey);
+        if(successedCacheRequest!=null) {
+            successedCacheRequest.deliver();
         }
-
-        @Override
-        public void run() {
-            // TODO Auto-generated method stub
-            ReadCacheRequest successedCacheRequest = cacheRequestMap.remove(cacheKey);
-            cacheMap.put(cacheKey, successedCacheRequest);
-            if (deliveryRunnable == null) {
-                deliveryRunnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        for (ReadCacheRequest cacheRequest : cacheMap.values()) {
-                            if (cacheRequest != null) {
-                                for (ImageContainer container : cacheRequest.mContainers) {
-                                    if (container.mListener == null) {
-                                        continue;
-                                    }
-                                    container.mBitmap = cacheRequest.getCacheBitmap();
-                                    container.mListener.onResponse(container, false);
-                                }
-                            }
-                        }
-                        cacheMap.clear();
-                        deliveryRunnable = null;
-                    }
-                };
-                mainHandler.postDelayed(deliveryRunnable, 100);
-            }
-        }
-
     }
 
     class GetImageUseNetWork implements Runnable {
@@ -206,7 +174,13 @@ public class AsyncImageLoader extends ImageLoader{
                 @Override
                 public void onResponse(Bitmap response,boolean isFromCache) {
                     Bitmap bmpCompressed=ImageUtil.compressBitmap(response,maxWidth,maxHeight);
-                    onGetImageSuccess(cacheKey, bmpCompressed);
+
+                    ReadImageRequest cacheRequest = readImageRequestConcurrentHashMap.get(cacheKey);
+                    if (cacheRequest != null) {
+                        cacheRequest.setCacheBitmap(bmpCompressed);
+                        readSuccess(cacheKey);
+                    }
+
                 }
             }, 0, 0, Bitmap.Config.RGB_565, new Response.ErrorListener() {
                 @Override

@@ -536,6 +536,7 @@ public class ImageUtil {
         RoundedBitmapDrawable roundedBitmapDrawable =
                 RoundedBitmapDrawableFactory.create(res, src);
         //设置圆角半径
+        roundedBitmapDrawable.setAntiAlias(true);
         roundedBitmapDrawable.setCornerRadius(radius);
         return roundedBitmapDrawable;
     }
@@ -576,6 +577,7 @@ public class ImageUtil {
         Bitmap bmp = roundedBitmapDrawable.getBitmap();
         //设置圆角半径
         roundedBitmapDrawable.setCornerRadius(Math.max(bmp.getWidth(), bmp.getHeight()) / 2.0f);
+        roundedBitmapDrawable.setAntiAlias(true);
         return roundedBitmapDrawable;
     }
 

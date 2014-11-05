@@ -1,24 +1,28 @@
 package com.pocketdigi.plib.volley;
 
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
 
 import com.android.volley.toolbox.ImageLoader;
 
 import java.util.LinkedList;
 
 /**
+ * 读取图片的请求，可能从缓存或网络读取
  * Created by fhp on 14/11/3.
  */
-public class ReadCacheRequest {
+public class ReadImageRequest {
     public final LinkedList<ImageLoader.ImageContainer> mContainers = new LinkedList<ImageLoader.ImageContainer>();
     String cacheKey;
     private Bitmap mCacheBitmap;
+
     /**
-     * Constructs a new BatchedImageRequest object
-     * @param request The request being tracked
-     * @param container The ImageContainer of the person who initiated the request.
+     *
+     * @param container 返回给调用者的ImageContainer，包含Bitmap
+     * @param cacheKey 缓存的key
      */
-    public ReadCacheRequest(ImageLoader.ImageContainer container,String cacheKey) {
+    public ReadImageRequest(ImageLoader.ImageContainer container, String cacheKey) {
         this.cacheKey = cacheKey;
         mContainers.add(container);
     }
@@ -44,5 +48,24 @@ public class ReadCacheRequest {
     }
     public void setCacheBitmap(Bitmap mCacheBitmap) {
         this.mCacheBitmap = mCacheBitmap;
+    }
+
+    /**
+     * 请求结束后在UI线程分发结果
+     */
+    public void deliver()
+    {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                for (ImageLoader.ImageContainer container : mContainers) {
+                    if (container.mListener == null) {
+                        continue;
+                    }
+                    container.mBitmap = mCacheBitmap;
+                    container.mListener.onResponse(container, false);
+                }
+            }
+        });
     }
 }
