@@ -9,6 +9,7 @@ import android.util.LruCache;
 import com.android.volley.toolbox.ImageLoader;
 import com.jakewharton.disklrucache.DiskLruCache;
 import com.pocketdigi.plib.core.PApplication;
+import com.pocketdigi.plib.core.PLog;
 import com.pocketdigi.plib.util.MD5Utils;
 
 import java.io.File;
@@ -25,7 +26,8 @@ public class L2LRUImageCache implements ImageLoader.ImageCache{
     DiskLruCache diskLruCache;
     final int RAM_CACHE_SIZE = 10 * 1024 * 1024;
     String DISK_CACHE_DIR = "imageCache";
-    final long DISK_MAX_SIZE = 20 * 1024 * 1024;
+    //硬盘缓存50M
+    final long DISK_MAX_SIZE = 50 * 1024 * 1024;
 
     public L2LRUImageCache(Context context) {
         this.lruCache = new LruCache<String, Bitmap>(RAM_CACHE_SIZE) {
@@ -56,12 +58,17 @@ public class L2LRUImageCache implements ImageLoader.ImageCache{
         String key=generateKey(url);
         Bitmap bmp = lruCache.get(key);
         if (bmp == null) {
+            PLog.d(this,"内存读图失败，从磁盘读"+url);
             bmp = getBitmapFromDiskLruCache(key);
             //从磁盘读出后，放入内存
             if(bmp!=null)
             {
                 lruCache.put(key,bmp);
             }
+        }
+        if(bmp==null)
+        {
+            PLog.d(this,"从缓存读图失败，去下载"+url);
         }
         return bmp;
     }

@@ -12,6 +12,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.pocketdigi.plib.core.PApplication;
+import com.pocketdigi.plib.core.PLog;
 import com.pocketdigi.plib.util.ImageUtil;
 
 import java.util.HashMap;
@@ -178,6 +179,8 @@ public class AsyncImageLoader extends ImageLoader{
                     ReadImageRequest cacheRequest = readImageRequestConcurrentHashMap.get(cacheKey);
                     if (cacheRequest != null) {
                         cacheRequest.setCacheBitmap(bmpCompressed);
+                        //放到缓存里
+                        mCache.putBitmap(cacheKey, bmpCompressed);
                         readSuccess(cacheKey);
                     }
 
