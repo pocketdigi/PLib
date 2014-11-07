@@ -14,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.pocketdigi.plib.R;
+import com.pocketdigi.plib.core.PLog;
 import com.pocketdigi.plib.util.ImageUtil;
 
 /**
@@ -52,9 +53,12 @@ public class RoundCornerNetworkImageView extends NetworkImageView {
         if (bm != null) {
             if(partBlur)
             {
+                PLog.d(this,"开始虚化");
                 bm= ImageUtil.blurBitmapPart(bm, (int)(bm.getHeight()*0.6));
             }
+            PLog.d(this,"开始切圆角");
             RoundedBitmapDrawable roundedBitmapDrawable = ImageUtil.toRoundDrawable(getResources(), bm,radius);
+            PLog.d(this,"结束切圆角");
             setImageDrawable(roundedBitmapDrawable);
         }
         loadFinish=true;
