@@ -31,23 +31,23 @@ import com.android.volley.toolbox.ImageLoader.ImageListener;
  */
 public class NetworkImageView extends ImageView {
     /** The URL of the network image to load */
-    private String mUrl;
+    protected String mUrl;
 
     /**
      * Resource ID of the image to be used as a placeholder until the network image is loaded.
      */
-    private int mDefaultImageId;
+    protected int mDefaultImageId;
 
     /**
      * Resource ID of the image to be used if the network response fails.
      */
-    private int mErrorImageId;
+    protected int mErrorImageId;
 
     /** Local copy of the ImageLoader. */
-    private ImageLoader mImageLoader;
+    protected ImageLoader mImageLoader;
 
     /** Current ImageContainer. (either in-flight or finished) */
-    private ImageContainer mImageContainer;
+    protected ImageContainer mImageContainer;
 
     public NetworkImageView(Context context) {
         this(context, null);
@@ -100,7 +100,7 @@ public class NetworkImageView extends ImageView {
      * Loads the image for the view if it isn't already loaded.
      * @param isInLayoutPass True if this was invoked from a layout pass, false otherwise.
      */
-    void loadImageIfNecessary(final boolean isInLayoutPass) {
+    protected void loadImageIfNecessary(final boolean isInLayoutPass) {
         int width = getWidth();
         int height = getHeight();
 
@@ -183,7 +183,7 @@ public class NetworkImageView extends ImageView {
         mImageContainer = newContainer;
     }
 
-    private void setDefaultImageOrNull() {
+    protected void setDefaultImageOrNull() {
         if(mDefaultImageId != 0) {
             setImageResource(mDefaultImageId);
         }
