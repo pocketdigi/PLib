@@ -2,6 +2,7 @@ package com.pocketdigi.plib.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -51,4 +52,36 @@ public class DateUtils {
 		String str=String.format("%02d:%02d:%02d", hour,minute,second);
 		return str;
 	}
+
+    /**
+     * 获取某天的开始时间 00:00:00.000
+     * @param calendar
+     * @return
+     */
+    public static long getStartTimeOfDay(Calendar calendar)
+    {
+        Calendar c=(Calendar)calendar.clone();
+        c.set(Calendar.HOUR_OF_DAY,0);
+        c.set(Calendar.MINUTE,0);
+        c.set(Calendar.SECOND,0);
+        c.set(Calendar.MILLISECOND,0);
+        return c.getTimeInMillis();
+    }
+
+    /**
+     * 今天的开始时间  00:00:00.000
+     * @return
+     */
+    public static long getStartOfToday()
+    {
+        Calendar c=Calendar.getInstance();
+        return getStartTimeOfDay(c);
+    }
+
+    public static boolean isToday(long timestamp)
+    {
+        long todayStart=getStartOfToday();
+        long delta=timestamp-todayStart;
+        return delta>0&&delta<24*60*60*1000;
+    }
 }
