@@ -1,8 +1,10 @@
 package com.pocketdigi.plib.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
@@ -107,5 +109,11 @@ public class RuntimeUtil {
         size[0]=displayMetrics.widthPixels;
         size[1]=displayMetrics.heightPixels;
         return size;
+    }
+
+    public static int getStatusBarHeight(Activity activity){
+        Rect rect = new Rect();
+        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+        return rect.top;
     }
 }

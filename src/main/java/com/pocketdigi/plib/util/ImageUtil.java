@@ -630,6 +630,7 @@ public class ImageUtil {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = false;
         options.inSampleSize = inSampleSize;
+        options.inPreferredConfig=Bitmap.Config.RGB_565;
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId, options);
         return bitmap;
     }
