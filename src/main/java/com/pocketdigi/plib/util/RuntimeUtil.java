@@ -111,6 +111,12 @@ public class RuntimeUtil {
         return size;
     }
 
+    /**
+     * 获取状态栏高度
+     * 原理，取可见区域的top值
+     * @param activity
+     * @return
+     */
     public static int getStatusBarHeight(Activity activity){
         Rect rect = new Rect();
         activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
