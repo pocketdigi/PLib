@@ -75,6 +75,7 @@ public class ImageLoader {
     public interface ImageCache {
         public Bitmap getBitmap(String url);
         public void putBitmap(String url, Bitmap bitmap);
+        public void clear();
     }
 
     /**

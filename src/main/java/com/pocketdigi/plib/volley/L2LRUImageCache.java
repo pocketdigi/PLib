@@ -10,6 +10,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.jakewharton.disklrucache.DiskLruCache;
 import com.pocketdigi.plib.core.PApplication;
 import com.pocketdigi.plib.core.PLog;
+import com.pocketdigi.plib.util.FileUtils;
 import com.pocketdigi.plib.util.MD5Utils;
 
 import java.io.File;
@@ -25,10 +26,10 @@ public class L2LRUImageCache implements ImageLoader.ImageCache{
     LruCache<String, Bitmap> lruCache;
     DiskLruCache diskLruCache;
     final int RAM_CACHE_SIZE = 10 * 1024 * 1024;
-    String DISK_CACHE_DIR = "imageCache";
+    String DISK_CACHE_DIR = "cache";
     //硬盘缓存50M
     final long DISK_MAX_SIZE = 50 * 1024 * 1024;
-
+    String cacheFullPath;
     public L2LRUImageCache(Context context) {
         this.lruCache = new LruCache<String, Bitmap>(RAM_CACHE_SIZE) {
             @Override
@@ -40,7 +41,8 @@ public class L2LRUImageCache implements ImageLoader.ImageCache{
         if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
         {
 
-            File cacheDir = context.getExternalFilesDir(DISK_CACHE_DIR);;
+            File cacheDir = context.getExternalFilesDir(DISK_CACHE_DIR);
+            cacheFullPath=cacheDir.getAbsolutePath();
             if(!cacheDir.exists())
             {
                 cacheDir.mkdir();
@@ -78,6 +80,12 @@ public class L2LRUImageCache implements ImageLoader.ImageCache{
         String key=generateKey(url);
         lruCache.put(key, bitmap);
         putBitmapToDiskLruCache(key,bitmap);
+    }
+
+    @Override
+    public void clear() {
+        lruCache.evictAll();
+        FileUtils.deleteFile(cacheFullPath);
     }
 
     private void putBitmapToDiskLruCache(String key, Bitmap bitmap) {

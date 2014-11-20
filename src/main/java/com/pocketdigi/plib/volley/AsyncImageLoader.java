@@ -196,4 +196,12 @@ public class AsyncImageLoader extends ImageLoader{
         }
 
     }
+
+    /**
+     * 清除缓存
+     */
+    public void clearCache()
+    {
+        mCache.clear();
+    }
 }
