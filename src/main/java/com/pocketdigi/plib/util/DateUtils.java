@@ -78,10 +78,28 @@ public class DateUtils {
         return getStartTimeOfDay(c);
     }
 
+    /**
+     * 传入时间是否为今日时间
+     * @param timestamp
+     * @return
+     */
     public static boolean isToday(long timestamp)
     {
         long todayStart=getStartOfToday();
         long delta=timestamp-todayStart;
         return delta>0&&delta<24*60*60*1000;
     }
+
+    /**
+     * 传入时间 是否为明日 时间
+     * @param timestamp
+     * @return
+     */
+    public static boolean isTomorrow(long timestamp)
+    {
+        long tomorrowStart=getStartOfToday()+24*60*60*1000;
+        long delta=timestamp-tomorrowStart;
+        return delta>0&&delta<24*60*60*1000;
+    }
+
 }
