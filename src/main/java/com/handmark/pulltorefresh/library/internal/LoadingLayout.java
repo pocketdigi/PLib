@@ -390,4 +390,8 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		}
 	}
 
+    public void hideRoot()
+    {
+        mInnerLayout.setVisibility(View.GONE);
+    }
 }
