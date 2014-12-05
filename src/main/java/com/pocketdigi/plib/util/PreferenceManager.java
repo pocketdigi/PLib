@@ -2,6 +2,9 @@ package com.pocketdigi.plib.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
+
+import com.google.gson.Gson;
 import com.pocketdigi.plib.core.PApplication;
 import com.pocketdigi.plib.core.PLog;
 
@@ -143,5 +146,40 @@ public class PreferenceManager {
         return settings.getFloat(key, defVal);
     }
 
+    /**
+     * 写入Object，所有写入操作执行完后，必须commit
+     * 原理:使用gson将Object序列化成字符串
+     * @param key
+     * @param value
+     * @return
+     */
+    public PreferenceManager putObject(String key, Object value) {
+        Gson gson=new Gson();
+        String str=gson.toJson(value);
+        editor.putString(key, str);
+        return this;
+    }
 
+    /**
+     * 读取Object
+     * @param key 保存的key
+     * @param classOfT 对象类型
+     * @param <T>
+     * @return
+     */
+    public <T> T getObject(String key,Class<T> classOfT)
+    {
+        String str=settings.getString(key,null);
+        if(TextUtils.isEmpty(str))
+            return null;
+        try {
+            Gson gson = new Gson();
+            T t = gson.fromJson(str, classOfT);
+            return t;
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
