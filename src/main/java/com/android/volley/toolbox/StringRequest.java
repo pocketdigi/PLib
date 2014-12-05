@@ -29,6 +29,9 @@ import java.io.UnsupportedEncodingException;
  * A canned request for retrieving the response body at a given URL as a String.
  */
 public class StringRequest extends Request<String> {
+    //默认缓存1天
+    long cacheMaxAge =60*60*24*1000*1;
+
     private final Listener<String> mListener;
 
     /**
@@ -69,6 +72,14 @@ public class StringRequest extends Request<String> {
         } catch (UnsupportedEncodingException e) {
             parsed = new String(response.data);
         }
-        return Response.success(parsed, AlwaysCacheHttpHeaderParser.parseCacheHeaders(response),response.notModified);
+        return Response.success(parsed, AlwaysCacheHttpHeaderParser.parseCacheHeaders(response, cacheMaxAge),response.notModified);
+    }
+
+    /**
+     * 设置缓存寿命
+     * @param cacheMaxAge 毫秒
+     */
+    public void setCacheMaxAge(long cacheMaxAge) {
+        this.cacheMaxAge = cacheMaxAge;
     }
 }

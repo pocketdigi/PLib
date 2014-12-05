@@ -36,7 +36,7 @@ public class AlwaysCacheHttpHeaderParser {
      * @param response The network response to parse headers from
      * @return a cache entry for the given response, or null if the response is not cacheable.
      */
-    public static Cache.Entry parseCacheHeaders(NetworkResponse response) {
+    public static Cache.Entry parseCacheHeaders(NetworkResponse response,long maxAge) {
         long now = System.currentTimeMillis();
 
         Map<String, String> headers = response.headers;
@@ -44,7 +44,6 @@ public class AlwaysCacheHttpHeaderParser {
         long serverDate = 0;
         long serverExpires = 0;
         long softExpire = 0;
-        long maxAge = 60*60*24;
         boolean hasCacheControl = false;
 
         String serverEtag = headers.get("ETag");
@@ -54,7 +53,7 @@ public class AlwaysCacheHttpHeaderParser {
         if (headerValue != null) {
             serverDate = parseDateAsEpoch(headerValue);
         }
-        softExpire = now + maxAge * 1000;
+        softExpire = now + maxAge;
 
         Cache.Entry entry = new Cache.Entry();
         entry.data = response.data;
