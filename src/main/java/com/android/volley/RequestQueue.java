@@ -284,5 +284,7 @@ public class RequestQueue {
         }
     }
 
-
+    public Network getNetwork() {
+        return mNetwork;
+    }
 }

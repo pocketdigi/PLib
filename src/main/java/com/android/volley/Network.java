@@ -16,6 +16,8 @@
 
 package com.android.volley;
 
+import com.android.volley.toolbox.HttpStack;
+
 /**
  * An interface for performing requests.
  */
@@ -27,4 +29,5 @@ public interface Network {
      * @throws com.android.volley.VolleyError on errors
      */
     public NetworkResponse performRequest(Request<?> request) throws VolleyError;
+    public HttpStack getHttpStack();
 }

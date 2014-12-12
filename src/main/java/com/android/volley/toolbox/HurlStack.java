@@ -49,7 +49,7 @@ import javax.net.ssl.SSLSocketFactory;
 public class HurlStack implements HttpStack {
 
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
-
+    String lastRequestSessionId;
     /**
      * An interface for transforming URLs before use.
      */
@@ -120,9 +120,20 @@ public class HurlStack implements HttpStack {
             if (header.getKey() != null) {
                 Header h = new BasicHeader(header.getKey(), header.getValue().get(0));
                 response.addHeader(h);
+                if(header.getKey().equals("jsessionid"))
+                {
+                    if(header.getValue().size()>0) {
+                        lastRequestSessionId = header.getValue().get(0);
+                    }
+                }
             }
         }
         return response;
+    }
+
+    @Override
+    public String getLastRequestSessionId() {
+        return lastRequestSessionId;
     }
 
     /**

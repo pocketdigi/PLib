@@ -152,6 +152,11 @@ public class BasicNetwork implements Network {
         }
     }
 
+    @Override
+    public HttpStack getHttpStack() {
+        return mHttpStack;
+    }
+
     /**
      * Logs requests that took over SLOW_REQUEST_THRESHOLD_MS to complete.
      */

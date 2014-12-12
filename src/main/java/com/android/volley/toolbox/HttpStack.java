@@ -41,5 +41,5 @@ public interface HttpStack {
      */
     public HttpResponse performRequest(Request<?> request, Map<String, String> additionalHeaders)
         throws IOException, AuthFailureError;
-
+    public String getLastRequestSessionId();
 }
