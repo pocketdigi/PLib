@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
+import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -136,7 +137,7 @@ public class RoundCornerNetworkImageView extends NetworkImageView {
         ImageLoader.ImageContainer newContainer = mImageLoader.get(mUrl,
                 new ImageLoader.ImageListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
+                    public void onErrorResponse(Request request,VolleyError error) {
                         if (mErrorImageId != 0) {
                             setImageResource(mErrorImageId);
                         }

@@ -21,6 +21,7 @@ import android.util.AttributeSet;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 
+import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader.ImageContainer;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
@@ -149,7 +150,7 @@ public class NetworkImageView extends ImageView {
         ImageContainer newContainer = mImageLoader.get(mUrl,
                 new ImageListener() {
                     @Override
-                    public void onErrorResponse(VolleyError error) {
+                    public void onErrorResponse(Request request,VolleyError error) {
                         if (mErrorImageId != 0) {
                             setImageResource(mErrorImageId);
                         }

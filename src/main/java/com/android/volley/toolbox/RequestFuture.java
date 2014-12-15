@@ -138,15 +138,15 @@ public class RequestFuture<T> implements Future<T>, Response.Listener<T>,
     }
 
     @Override
-    public synchronized void onResponse(T response,boolean isFromCache) {
-        mResultReceived = true;
-        mResult = response;
+    public void onErrorResponse(Request request, VolleyError error) {
+        mException = error;
         notifyAll();
     }
 
     @Override
-    public synchronized void onErrorResponse(VolleyError error) {
-        mException = error;
+    public void onResponse(Request request, T response, boolean isFromCache) {
+        mResultReceived = true;
+        mResult = response;
         notifyAll();
     }
 }

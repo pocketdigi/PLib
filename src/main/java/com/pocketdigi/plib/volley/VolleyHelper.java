@@ -52,7 +52,7 @@ public class VolleyHelper {
         if (NetWorkUtil.isNetConnected()) {
             Request<String> request= queue.add(new StringRequest(url, new Response.Listener<String>() {
                 @Override
-                public void onResponse(String response,boolean isFromCache) {
+                public void onResponse(Request request,String response,boolean isFromCache) {
                     PLog.d(this," Request "+url+" success \n "+response);
                     Gson gson = new Gson();
                     WeakReference<ResponseListener> wr = listenerHashMap.get(url);
@@ -72,7 +72,7 @@ public class VolleyHelper {
                 }
             }, new Response.ErrorListener() {
                 @Override
-                public void onErrorResponse(VolleyError error) {
+                public void onErrorResponse(Request request,VolleyError error) {
                     PLog.d(this," Request "+url+" error \n "+error.toString());
                     WeakReference<ResponseListener> wr = listenerHashMap.get(url);
                     if (wr != null) {

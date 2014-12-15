@@ -100,7 +100,7 @@ public class ImageLoader {
             final int defaultImageResId, final int errorImageResId) {
         return new ImageListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onErrorResponse(Request request,VolleyError error) {
                 if (errorImageResId != 0) {
                     view.setImageResource(errorImageResId);
                 }
@@ -220,13 +220,13 @@ public class ImageLoader {
         Request<?> newRequest =
             new ImageRequest(requestUrl, new Listener<Bitmap>() {
                 @Override
-                public void onResponse(Bitmap response,boolean isFromCache) {
+                public void onResponse(Request request,Bitmap response,boolean isFromCache) {
                     onGetImageSuccess(cacheKey, response);
                 }
             }, maxWidth, maxHeight,
             Config.RGB_565, new ErrorListener() {
                 @Override
-                public void onErrorResponse(VolleyError error) {
+                public void onErrorResponse(Request request,VolleyError error) {
                     onGetImageError(cacheKey, error);
                 }
             });
@@ -421,6 +421,10 @@ public class ImageLoader {
             }
             return false;
         }
+
+        public Request<?> getRequest() {
+            return mRequest;
+        }
     }
 
     /**
@@ -429,7 +433,7 @@ public class ImageLoader {
      * @param request The BatchedImageRequest to be delivered.
      * @param error The volley error associated with the request (if applicable).
      */
-    private void batchResponse(String cacheKey, BatchedImageRequest request) {
+    private void batchResponse(String cacheKey, final BatchedImageRequest request) {
         mBatchedResponses.put(cacheKey, request);
         // If we don't already have a batch delivery runnable in flight, make a new one.
         // Note that this will be used to deliver responses to all callers in mBatchedResponses.
@@ -449,7 +453,7 @@ public class ImageLoader {
                                 container.mBitmap = bir.mResponseBitmap;
                                 container.mListener.onResponse(container, false);
                             } else {
-                                container.mListener.onErrorResponse(bir.getError());
+                                container.mListener.onErrorResponse(request.getRequest(),bir.getError());
                             }
                         }
                     }

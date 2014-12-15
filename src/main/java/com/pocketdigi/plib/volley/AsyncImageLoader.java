@@ -173,7 +173,7 @@ public class AsyncImageLoader extends ImageLoader{
             // track it.
             Request<?> newRequest = new ImageRequest(imageContainer.getRequestUrl(), new Response.Listener<Bitmap>() {
                 @Override
-                public void onResponse(Bitmap response,boolean isFromCache) {
+                public void onResponse(Request request,Bitmap response,boolean isFromCache) {
                     Bitmap bmpCompressed=ImageUtil.compressBitmap(response,maxWidth,maxHeight);
 
                     ReadImageRequest cacheRequest = readImageRequestConcurrentHashMap.get(cacheKey);
@@ -187,7 +187,7 @@ public class AsyncImageLoader extends ImageLoader{
                 }
             }, 0, 0, Bitmap.Config.RGB_565, new Response.ErrorListener() {
                 @Override
-                public void onErrorResponse(VolleyError error) {
+                public void onErrorResponse(Request request,VolleyError error) {
                     onGetImageError(cacheKey, error);
                 }
             });

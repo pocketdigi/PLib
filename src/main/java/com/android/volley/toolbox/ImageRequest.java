@@ -183,7 +183,7 @@ public class ImageRequest extends Request<Bitmap> {
 
     @Override
     protected void deliverResponse(Bitmap response,boolean isFromCache) {
-        mListener.onResponse(response,isFromCache);
+        mListener.onResponse(this,response,isFromCache);
     }
 
     /**
