@@ -97,4 +97,16 @@ public class StringUtils {
 		return null;
 	}
 
+    /**
+     * 是否是手机号码
+     * @param str 1开头，后跟10位数字
+     * @return
+     */
+    public static boolean isCellPhoneNumber(String str)
+    {
+        Pattern pattern=Pattern.compile("^1[\\d]{10}$");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
 }
