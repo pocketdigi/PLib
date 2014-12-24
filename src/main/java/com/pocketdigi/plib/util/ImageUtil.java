@@ -21,6 +21,10 @@ import android.support.annotation.DrawableRes;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 
+import com.pocketdigi.plib.core.PLog;
+
+import java.io.ByteArrayOutputStream;
+
 /**
  * 图片处理util
  * Created by fhp on 14-9-7.
@@ -636,14 +640,14 @@ public class ImageUtil {
     }
 
     /**
-     * 压缩图片，使用sampleSize，因为是int所有有误差
+     * 缩小图片，使用sampleSize，因为是int所有有误差
      *
      * @param bmp
      * @param maxWidth
      * @param maxHeight
      * @return
      */
-    public static Bitmap compressBitmap(Bitmap bmp, int maxWidth, int maxHeight) {
+    public static Bitmap scaleBitmap(Bitmap bmp, int maxWidth, int maxHeight) {
         float scale = getCompressScale(bmp.getWidth(), bmp.getHeight(), maxWidth, maxHeight);
         Matrix matrix = new Matrix();
         matrix.postScale(scale, scale); //长和宽放大缩小的比例
@@ -657,6 +661,28 @@ public class ImageUtil {
             bmp.recycle();
         }
         return resizeBmp;
+    }
+
+    /**
+     * 有损压缩图片，不缩小图片分辨率,质量为60%
+     * @param filePath
+     * @return
+     */
+    public static byte[] compressBitmap(String filePath) {
+        Bitmap sourceBmp=BitmapFactory.decodeFile(filePath);
+        if(sourceBmp!=null)
+        {
+            PLog.d(TAG, "原大小" + sourceBmp.getByteCount());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            sourceBmp.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+            sourceBmp.recycle();
+            byte[] bytes=baos.toByteArray();
+            PLog.d(TAG, "压缩后大小"+bytes.length);
+            return bytes;
+        }else{
+            return null;
+        }
+
     }
 
     /**
@@ -760,30 +786,30 @@ public class ImageUtil {
      * 生成圆形图片
      *
      * @param res
-     * @param resId
+     * @param resId 必须宽高1:1
      * @return
      */
     public static RoundedBitmapDrawable toCircularDrawable(Resources res, int resId) {
         Bitmap src = BitmapFactory.decodeResource(res, resId);
-        return toRoundDrawable(res, src, Math.max(src.getWidth(), src.getHeight()) / 2.0f);
+        return toRoundDrawable(res, src, src.getWidth() / 2.0f);
     }
 
     /**
      * 生成圆形图片
      *
      * @param res
-     * @param src
+     * @param src 必须宽高1:1
      * @return
      */
     public static RoundedBitmapDrawable toCircularDrawable(Resources res, Bitmap src) {
-        return toRoundDrawable(res, src, Math.max(src.getWidth(), src.getHeight()) / 2.0f);
+        return toRoundDrawable(res, src, src.getWidth() / 2.0f);
     }
 
     /**
      * 生成圆形图片
      *
      * @param res
-     * @param filePath
+     * @param filePath 宽高1：1的图片路径
      * @return
      */
     public static RoundedBitmapDrawable toCircularDrawable(Resources res, String filePath) {
@@ -791,7 +817,7 @@ public class ImageUtil {
                 RoundedBitmapDrawableFactory.create(res, filePath);
         Bitmap bmp = roundedBitmapDrawable.getBitmap();
         //设置圆角半径
-        roundedBitmapDrawable.setCornerRadius(Math.max(bmp.getWidth(), bmp.getHeight()) / 2.0f);
+        roundedBitmapDrawable.setCornerRadius(bmp.getWidth() / 2.0f);
         roundedBitmapDrawable.setAntiAlias(true);
         return roundedBitmapDrawable;
     }

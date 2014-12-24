@@ -12,10 +12,8 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.pocketdigi.plib.core.PApplication;
-import com.pocketdigi.plib.core.PLog;
 import com.pocketdigi.plib.util.ImageUtil;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -174,7 +172,7 @@ public class AsyncImageLoader extends ImageLoader{
             Request<?> newRequest = new ImageRequest(imageContainer.getRequestUrl(), new Response.Listener<Bitmap>() {
                 @Override
                 public void onResponse(Request request,Bitmap response,boolean isFromCache) {
-                    Bitmap bmpCompressed=ImageUtil.compressBitmap(response,maxWidth,maxHeight);
+                    Bitmap bmpCompressed=ImageUtil.scaleBitmap(response, maxWidth, maxHeight);
 
                     ReadImageRequest cacheRequest = readImageRequestConcurrentHashMap.get(cacheKey);
                     if (cacheRequest != null) {

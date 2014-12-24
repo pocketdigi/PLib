@@ -31,8 +31,8 @@ public abstract class PApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        activities=new ArrayList<Activity>();
-        services=new ArrayList<Service>();
+        activities=new ArrayList<>();
+        services=new ArrayList<>();
         instance=this;
         instanceState=new Bundle();
     }
@@ -69,8 +69,7 @@ public abstract class PApplication extends Application{
     /**
      * 退出整个应用,会关闭Activity和Service
      */
-    public void exit()
-    {
+    public void exit() {
         destoryAllActivity();
         destoryAllService();
         System.exit(0);
