@@ -36,7 +36,7 @@ public class PreferenceManager {
      */
     public static PreferenceManager getManagerWithFileName(String fileName) {
         if (preferenceManagerWeakHashMap == null) {
-            preferenceManagerWeakHashMap = new WeakHashMap<String, PreferenceManager>();
+            preferenceManagerWeakHashMap = new WeakHashMap<>();
         }
         if ((!preferenceManagerWeakHashMap.containsKey(fileName))||preferenceManagerWeakHashMap.get(fileName)==null) {
             PreferenceManager manager = new PreferenceManager(fileName);

@@ -20,7 +20,7 @@ public class RuntimeUtil {
     private static boolean isCurrentVersionFirstRun=true;
 
     /**
-     * 读入配置，只能在启动时调用一次
+     * 读入配置，只能在启动时调用一次(MainActiviry)
      * 不要在Application中调用，因为退出应用，Application还在，再次启动不会重新读取
      */
     public static void readSetting()

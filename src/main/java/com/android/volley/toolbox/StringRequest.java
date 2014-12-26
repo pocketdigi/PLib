@@ -73,6 +73,7 @@ public class StringRequest extends Request<String> {
         } catch (UnsupportedEncodingException e) {
             parsed = new String(response.data);
         }
+        PLog.d("http",getUrl());
         PLog.d("http",parsed);
         return Response.success(parsed, AlwaysCacheHttpHeaderParser.parseCacheHeaders(response, cacheMaxAge),response.notModified);
     }
