@@ -62,7 +62,7 @@ public class RuntimeUtil {
     /**
      * 设置当前版本为非第一次运行
      */
-    public static void setCurrentVersionFirstRun()
+    private static void setCurrentVersionFirstRun()
     {
         PreferenceManager manager=PreferenceManager.getDefaultManager();
         manager.putBoolean(PREKEY_FIRSTRUN+getCurrentVersionCode(),false).commit();
