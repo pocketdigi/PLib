@@ -63,18 +63,17 @@ public class ImageUtil {
             output.copyTo(bitmap);
             return bitmap;
         }
-        return stackblur(context, sentBitmap, radius);
+        return stackblur(sentBitmap, radius);
     }
 
     /**
      * 纯Java实现的虚化，适用老版本api，外部只需调fastblur，会自动判断
      *
-     * @param context
      * @param sentBitmap
      * @param radius
      * @return
      */
-    private static Bitmap stackblur(Context context, Bitmap sentBitmap,
+    private static Bitmap stackblur(Bitmap sentBitmap,
                                     int radius) {
 
         Bitmap bitmap = null;
