@@ -52,9 +52,9 @@ public class DownloadManager implements DownloadListener {
     }
 
     private DownloadManager() {
-        listeners = new HashSet<DownloadListener>();
-        taskList = new ArrayList<DownTask>();
-        mDownWorkQueue = new LinkedBlockingQueue<Runnable>();
+        listeners = new HashSet<>();
+        taskList = new ArrayList<>();
+        mDownWorkQueue = new LinkedBlockingQueue<>();
         executor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60L, TimeUnit.SECONDS, mDownWorkQueue);
 
         wifiReceiver=new WifiStateReceiver();

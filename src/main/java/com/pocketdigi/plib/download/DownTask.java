@@ -119,6 +119,10 @@ public class DownTask {
         return deleteFile;
     }
 
+    /**
+     * 设置任务取消后删除临时文件
+     * @param deleteFile
+     */
     public void setDeleteFile(boolean deleteFile) {
         this.deleteFile = deleteFile;
     }
