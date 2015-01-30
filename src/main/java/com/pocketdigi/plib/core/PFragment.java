@@ -6,13 +6,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import org.androidannotations.annotations.AfterViews;
+
 import org.androidannotations.annotations.EFragment;
 
 /**
  * Created by fhp on 14-9-1.
  */
-@EFragment
 public abstract class PFragment extends Fragment {
 
     @Override
