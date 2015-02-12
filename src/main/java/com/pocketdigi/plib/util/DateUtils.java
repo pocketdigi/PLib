@@ -102,4 +102,23 @@ public class DateUtils {
         return delta>0&&delta<24*60*60*1000;
     }
 
+    /**
+     * 返回中文星期几
+     * @param timestamp
+     * @param mode 模式:0为周日到周六,1为星期日到星期六
+     * @return 周日-周六 或 星期日-星期六
+     */
+    public static String getChineseWeekDay(long timestamp,int mode) {
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+        String[] days={"周","一","二","三","四","五","六"};
+        int dayOfWeak = calendar.get(Calendar.DAY_OF_WEEK);
+        switch (mode){
+            case 0:
+                return "周"+days[dayOfWeak-1];
+            default:
+                return "星期"+days[dayOfWeak-1];
+        }
+    }
+
 }
