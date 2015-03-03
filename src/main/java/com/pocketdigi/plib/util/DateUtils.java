@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * 日期处理类
@@ -18,7 +19,7 @@ public class DateUtils {
 	 * @return
 	 */
 	public static Date str2Date(String format, String str) {
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.CHINA);
 		try {
 			return sdf.parse(str);
 		} catch (ParseException e) {
@@ -34,9 +35,8 @@ public class DateUtils {
 	 * @return　2012-12-30
 	 */
 	public static String date2Str(String format, Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.CHINA);
 		return sdf.format(date);
-
 	}
 
 	/**
