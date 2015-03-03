@@ -103,6 +103,18 @@ public class DateUtils {
     }
 
     /**
+     * 传入时间 是否为后天 时间
+     * @param timestamp
+     * @return
+     */
+    public static boolean isDayAfterTomorrow(long timestamp)
+    {
+        long tomorrowStart=getStartOfToday()+24*60*60*1000*2;
+        long delta=timestamp-tomorrowStart;
+        return delta>0&&delta<24*60*60*1000;
+    }
+
+    /**
      * 返回中文星期几
      * @param timestamp
      * @param mode 模式:0为周日到周六,1为星期日到星期六
