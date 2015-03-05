@@ -93,7 +93,7 @@ public abstract class PFragment extends Fragment implements OnBackPressedListene
     }
 
     @Override
-    public void onBackPressed() {
-
+    public boolean onBackPressed() {
+        return false;
     }
 }

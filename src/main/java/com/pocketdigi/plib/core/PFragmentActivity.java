@@ -45,7 +45,6 @@ public abstract class PFragmentActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         notifyBackPressed();
     }
 
@@ -57,7 +56,9 @@ public abstract class PFragmentActivity extends FragmentActivity {
     }
     private void notifyBackPressed() {
         for(OnBackPressedListener listener:backPressedListeners) {
-            listener.onBackPressed();
+            if(listener.onBackPressed()){
+                break;
+            }
         }
     }
 }
