@@ -4,9 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 
 /**
- * Activity基类
+ * Activity基类，废弃，用PFragmentActivity代替
  * Created by fhp on 14-9-2.
  */
+@Deprecated
 public class PActivity extends Activity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -3,6 +3,7 @@ package com.pocketdigi.plib.core;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,8 @@ import org.androidannotations.annotations.EFragment;
 /**
  * Created by fhp on 14-9-1.
  */
-public abstract class PFragment extends Fragment {
+public abstract class PFragment extends Fragment implements OnBackPressedListener {
+    PFragmentActivity parentActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,11 +75,25 @@ public abstract class PFragment extends Fragment {
      * 注册监听器以及接收器(包括Event),在Fragment被隐藏或销毁时，会调用unregisterListerOrReceiver
      */
     protected void registerListenerOrReceiver() {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof PFragmentActivity) {
+            parentActivity = (PFragmentActivity) activity;
+            parentActivity.addBackPressedListener(this);
+        }
     }
 
     /**
      * 解注册监听器及接收器(包括Event)*
      */
     protected void unregisterListerOrReceiver() {
+        if (parentActivity != null) {
+            parentActivity.removeBackPressedListener(this);
+        }
+        parentActivity = null;
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }
