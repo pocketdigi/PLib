@@ -2,7 +2,6 @@ package com.pocketdigi.plib.core;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 
@@ -12,6 +11,10 @@ import java.util.ArrayList;
  */
 public abstract class PFragmentActivity extends FragmentActivity {
     ArrayList<OnBackPressedListener> backPressedListeners;
+    /**
+     * Back按键事件是否已经被处理
+     */
+    protected boolean backProcessed=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +58,10 @@ public abstract class PFragmentActivity extends FragmentActivity {
         backPressedListeners.remove(listener);
     }
     private void notifyBackPressed() {
+        backProcessed=false;
         for(OnBackPressedListener listener:backPressedListeners) {
             if(listener.onBackPressed()){
+                backProcessed=true;
                 break;
             }
         }
