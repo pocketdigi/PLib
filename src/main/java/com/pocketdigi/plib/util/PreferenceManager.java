@@ -66,7 +66,7 @@ public class PreferenceManager {
      */
     public PreferenceManager putBoolean(String key, boolean value) {
         editor.putBoolean(key, value);
-        PLog.d(this, "set "+key + " = " + value);
+        PLog.d(this, "set " + key + " = " + value);
         return this;
     }
 
@@ -155,8 +155,12 @@ public class PreferenceManager {
      */
     public PreferenceManager putObject(String key, Object value) {
         Gson gson=new Gson();
-        String str=gson.toJson(value);
-        editor.putString(key, str);
+        if(value!=null) {
+            String str = gson.toJson(value);
+            editor.putString(key, str);
+        }else{
+            editor.remove(key);
+        }
         return this;
     }
 
