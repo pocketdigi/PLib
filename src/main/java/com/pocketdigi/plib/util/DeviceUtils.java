@@ -6,7 +6,9 @@ import android.graphics.Rect;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.pocketdigi.plib.core.PApplication;
 
@@ -74,5 +76,23 @@ public class DeviceUtils {
             return oldIMSI != 0;
         }
         return false;
+    }
+
+    /**
+     * 隐藏输入法
+     * @param view 当前窗口的一个view
+     */
+    public static void hideSoftInput(View view) {
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    /**
+     * 开启输入法
+     * @param view EditText或其他可接收输入的View
+     */
+    public static void showSoftInput(View view) {
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(view, 0);
     }
 }
