@@ -12,6 +12,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.pocketdigi.plib.core.PApplication;
+import com.pocketdigi.plib.core.PLog;
 import com.pocketdigi.plib.util.ImageUtil;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +29,7 @@ public class AsyncImageLoader extends ImageLoader{
     /**
      * 在取的请求，可能没取到
      */
-    ConcurrentHashMap<String, ReadImageRequest> readImageRequestConcurrentHashMap = new ConcurrentHashMap<String, ReadImageRequest>();
+    ConcurrentHashMap<String, ReadImageRequest> readImageRequestConcurrentHashMap = new ConcurrentHashMap<>();
     // 读数据线程池，限制两个线程
     private ExecutorService readExecutorService = new ThreadPoolExecutor(0, 2, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
     //UI线程的Handler
@@ -147,6 +148,12 @@ public class AsyncImageLoader extends ImageLoader{
             successedCacheRequest.deliver();
         }
     }
+    private void readFailure(String cacheKey,VolleyError error) {
+        ReadImageRequest successedCacheRequest = readImageRequestConcurrentHashMap.remove(cacheKey);
+        if(successedCacheRequest!=null) {
+            successedCacheRequest.deliverError(error);
+        }
+    }
 
     class GetImageUseNetWork implements Runnable {
         ImageContainer imageContainer;
@@ -172,6 +179,7 @@ public class AsyncImageLoader extends ImageLoader{
             Request<?> newRequest = new ImageRequest(imageContainer.getRequestUrl(), new Response.Listener<Bitmap>() {
                 @Override
                 public void onResponse(Request request,Bitmap response,boolean isFromCache) {
+                    PLog.d(this,"onResponse");
                     Bitmap bmpCompressed=ImageUtil.scaleBitmap(response, maxWidth, maxHeight);
 
                     ReadImageRequest cacheRequest = readImageRequestConcurrentHashMap.get(cacheKey);
@@ -186,7 +194,10 @@ public class AsyncImageLoader extends ImageLoader{
             }, 0, 0, Bitmap.Config.RGB_565, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(Request request,VolleyError error) {
+                    PLog.d(this,"onErrorResponse");
                     onGetImageError(cacheKey, error);
+                    readFailure(cacheKey,error);
+
                 }
             });
             mInFlightRequests.put(cacheKey, new BatchedImageRequest(newRequest, imageContainer));

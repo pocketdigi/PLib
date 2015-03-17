@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.pocketdigi.plib.core.PLog;
 
@@ -67,6 +68,22 @@ public class ReadImageRequest {
                     }
                     container.mBitmap = mCacheBitmap;
                     container.mListener.onResponse(container, false);
+                }
+                PLog.d(this,"读图结束 分发结束"+cacheKey);
+            }
+        });
+    }
+    public void deliverError(final VolleyError error) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                PLog.d(this,"读图结束 开始分发"+cacheKey);
+                for (ImageLoader.ImageContainer container : mContainers) {
+                    if (container.mListener == null) {
+                        continue;
+                    }
+                    container.mBitmap = mCacheBitmap;
+                    container.mListener.onErrorResponse(null, error);
                 }
                 PLog.d(this,"读图结束 分发结束"+cacheKey);
             }

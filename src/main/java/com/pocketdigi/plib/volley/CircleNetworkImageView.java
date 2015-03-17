@@ -32,4 +32,10 @@ public class CircleNetworkImageView extends NetworkImageView{
             setImageDrawable(roundedBitmapDrawable);
         }
     }
+
+    @Override
+    public void setImageResource(int resId) {
+        RoundedBitmapDrawable roundedBitmapDrawable = ImageUtil.toCircularDrawable(getResources(), resId);
+        setImageDrawable(roundedBitmapDrawable);
+    }
 }
