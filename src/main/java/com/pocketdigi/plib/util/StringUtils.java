@@ -104,9 +104,25 @@ public class StringUtils {
      */
     public static boolean isCellPhoneNumber(String str)
     {
-        Pattern pattern=Pattern.compile("^1[\\d]{10}$");
+		if(TextUtils.isEmpty(str))
+			return false;
+        Pattern pattern=Pattern.compile("^1[3|4|5|7|8][\\d]{9}$");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
+
+	/**
+	 * 判断是否是数字
+	 * @param str
+	 * @return
+	 */
+	public static boolean isNumber(String str) {
+		for (int i = str.length();--i>=0;){
+			if (!Character.isDigit(str.charAt(i))){
+				return false;
+			}
+		}
+		return true;
+	}
 
 }
