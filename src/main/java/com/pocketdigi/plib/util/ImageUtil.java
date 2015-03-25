@@ -24,6 +24,8 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import com.pocketdigi.plib.core.PLog;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * 图片处理util
@@ -785,40 +787,52 @@ public class ImageUtil {
      * 生成圆形图片
      *
      * @param res
-     * @param resId 必须宽高1:1
+     * @param resId 必须宽高1:1，否则自动裁剪
      * @return
      */
     public static RoundedBitmapDrawable toCircularDrawable(Resources res, int resId) {
         Bitmap src = BitmapFactory.decodeResource(res, resId);
-        return toRoundDrawable(res, src, src.getWidth() / 2.0f);
+        return toCircularDrawable(res, src);
     }
 
     /**
      * 生成圆形图片
      *
      * @param res
-     * @param src 必须宽高1:1
+     * @param src 必须宽高1:1，否则自动裁剪
      * @return
      */
     public static RoundedBitmapDrawable toCircularDrawable(Resources res, Bitmap src) {
-        return toRoundDrawable(res, src, src.getWidth() / 2.0f);
+        int width = src.getWidth();
+        int height = src.getHeight();
+        if(width!=height) {
+            int min = Math.min(width, height);
+            Bitmap bmp = Bitmap.createBitmap(src, 0, 0, min, min);
+//            src.recycle();
+            return toRoundDrawable(res, bmp, min / 2.0f);
+        }
+        return toRoundDrawable(res, src, width / 2.0f);
     }
+
 
     /**
      * 生成圆形图片
      *
      * @param res
-     * @param filePath 宽高1：1的图片路径
+     * @param filePath 必须宽高1:1，否则自动裁剪
      * @return
      */
     public static RoundedBitmapDrawable toCircularDrawable(Resources res, String filePath) {
-        RoundedBitmapDrawable roundedBitmapDrawable =
-                RoundedBitmapDrawableFactory.create(res, filePath);
-        Bitmap bmp = roundedBitmapDrawable.getBitmap();
-        //设置圆角半径
-        roundedBitmapDrawable.setCornerRadius(bmp.getWidth() / 2.0f);
-        roundedBitmapDrawable.setAntiAlias(true);
-        return roundedBitmapDrawable;
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(filePath);
+            Bitmap bitmap  = BitmapFactory.decodeStream(fis);
+            return toCircularDrawable(res, bitmap);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 
