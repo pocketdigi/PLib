@@ -60,7 +60,7 @@ public class L2LRUImageCache implements ImageLoader.ImageCache{
         String key=generateKey(url);
         Bitmap bmp = lruCache.get(key);
         if (bmp == null) {
-            PLog.d(this,"内存读图失败，从磁盘读"+url);
+//            PLog.d(this,"内存读图失败，从磁盘读"+url);
             bmp = getBitmapFromDiskLruCache(key);
             //从磁盘读出后，放入内存
             if(bmp!=null)
@@ -70,7 +70,7 @@ public class L2LRUImageCache implements ImageLoader.ImageCache{
         }
         if(bmp==null)
         {
-            PLog.d(this,"从缓存读图失败，去下载"+url);
+//            PLog.d(this,"从缓存读图失败，去下载"+url);
         }
         return bmp;
     }

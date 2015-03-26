@@ -27,7 +27,7 @@ public class ReadImageRequest {
     public ReadImageRequest(ImageLoader.ImageContainer container, String cacheKey) {
         this.cacheKey = cacheKey;
         mContainers.add(container);
-        PLog.d(this,"开始读图"+cacheKey);
+//        PLog.d(this,"开始读图"+cacheKey);
     }
     /**
      *
@@ -61,7 +61,7 @@ public class ReadImageRequest {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                PLog.d(this,"读图结束 开始分发"+cacheKey);
+//                PLog.d(this,"读图结束 开始分发"+cacheKey);
                 for (ImageLoader.ImageContainer container : mContainers) {
                     if (container.mListener == null) {
                         continue;
@@ -69,7 +69,7 @@ public class ReadImageRequest {
                     container.mBitmap = mCacheBitmap;
                     container.mListener.onResponse(container, false);
                 }
-                PLog.d(this,"读图结束 分发结束"+cacheKey);
+//                PLog.d(this,"读图结束 分发结束"+cacheKey);
             }
         });
     }
@@ -77,7 +77,7 @@ public class ReadImageRequest {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                PLog.d(this,"读图结束 开始分发"+cacheKey);
+//                PLog.d(this,"读图结束 开始分发"+cacheKey);
                 for (ImageLoader.ImageContainer container : mContainers) {
                     if (container.mListener == null) {
                         continue;
@@ -85,7 +85,7 @@ public class ReadImageRequest {
                     container.mBitmap = mCacheBitmap;
                     container.mListener.onErrorResponse(null, error);
                 }
-                PLog.d(this,"读图结束 分发结束"+cacheKey);
+//                PLog.d(this,"读图结束 分发结束"+cacheKey);
             }
         });
     }
