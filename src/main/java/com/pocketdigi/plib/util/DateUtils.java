@@ -115,6 +115,17 @@ public class DateUtils {
     }
 
     /**
+     * 是否是昨天
+     * @param timestamp
+     * @return
+     */
+    public static boolean isYesterday(long timestamp) {
+        long yesterDay=getStartOfToday()-24*60*60*1000;
+        long delta=timestamp-yesterDay;
+        return delta>0&&delta<24*60*60*1000;
+    }
+
+    /**
      * 返回中文星期几
      * @param timestamp
      * @param mode 模式:0为周日到周六,1为星期日到星期六
@@ -131,6 +142,30 @@ public class DateUtils {
             default:
                 return "星期"+days[dayOfWeak-1];
         }
+    }
+
+    /**
+     * 转换成友好的时间字符串，相对。如：几分
+     * @return
+     */
+    public static String transformToFriendlyTime(long timestamp,long now) {
+        long delta=now-timestamp;
+        if(delta<1000*60) {
+            //时差与现在少于60秒
+            return String.valueOf((int)(delta/1000f))+"秒前";
+        }
+        if(delta<1000*60*60) {
+            //时差与现在少于1小时
+            return String.valueOf((int)(delta/(60*1000f)))+"分钟前";
+        }
+        if(delta<1000*60*60*24) {
+            //时差与现在少于24小时
+            return String.valueOf((int)(delta/(60*60*1000f)))+"小时前";
+        }
+        if(isYesterday(timestamp)) {
+            return "昨天 "+date2Str("HH:mm",new Date(timestamp));
+        }
+        return date2Str("MM月dd日 HH:mm",new Date(timestamp));
     }
 
 }
