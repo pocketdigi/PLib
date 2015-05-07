@@ -197,7 +197,6 @@ public class AsyncImageLoader extends ImageLoader{
                     PLog.d(this,"onErrorResponse");
                     onGetImageError(cacheKey, error);
                     readFailure(cacheKey,error);
-
                 }
             });
             mInFlightRequests.put(cacheKey, new BatchedImageRequest(newRequest, imageContainer));
