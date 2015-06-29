@@ -4,4 +4,19 @@
     <string name="dialog_timepicker_complete">完成</string>
     <string name="dialog_datepicker_title">选择日期</string>
     <string name="dialog_datepicker_complete">完成</string>
+
+    <!--讯飞app id-->
+    <string name="amap_xf_app_id">输入您讯飞的appid</string>
+    <string name="preference_default_tts_role">xiaoyan</string>
+    <string name="preference_key_tts_speed">tts_speed</string>
+    <string name="preference_title_tts_speed">语速</string>
+    <string name="preference_default_tts_speed">50</string>
+    <string name="preference_dialog_title_tts_speed">选择语速</string>
+    <string name="preference_key_tts_volume">tts_volume</string>
+    <string name="preference_title_tts_volume">音量</string>
+    <string name="preference_default_tts_volume">50</string>
+    <string name="preference_dialog_title_tts_volume">选择音量</string>
+    <string name="preference_key_tts_pitch">tts_pitch</string>
+    <string name="preference_title_tts_pitch">语调</string>
+    <string name="preference_default_tts_pitch">50</string>
 </resources>
