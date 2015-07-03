@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.Application;
 import android.app.Service;
 import android.os.Bundle;
+
+import com.pocketdigi.plib.util.DeviceUtils;
+
 import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;

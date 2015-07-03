@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.pocketdigi.plib.core.PApplication;
+import com.pocketdigi.plib.core.PLog;
 
 /**
  * 设备信息
@@ -29,6 +30,17 @@ public class DeviceUtils {
         int[] size = new int[2];
         size[0] = displayMetrics.widthPixels;
         size[1] = displayMetrics.heightPixels;
+        return size;
+    }
+
+    public static int[] printScreenSizeWithDP() {
+        WindowManager windowManager = (WindowManager) PApplication.getInstance().getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+        int[] size = new int[2];
+        size[0] = (int)(0.5F + (float)displayMetrics.widthPixels / displayMetrics.density);
+        size[1] =(int)(0.5F + (float)displayMetrics.heightPixels / displayMetrics.density);
+        PLog.e("Screen","Width:"+size[0]+"dp "+"Height:"+size[1]+"dp");
         return size;
     }
 
