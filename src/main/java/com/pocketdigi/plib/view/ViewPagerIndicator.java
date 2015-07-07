@@ -1,10 +1,8 @@
 package com.pocketdigi.plib.view;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -12,15 +10,16 @@ import android.widget.LinearLayout;
 import com.pocketdigi.plib.R;
 
 /**
+ * ViewPager指示器 选中为白点，未选中为空心
  * Created by fhp on 15/3/3.
  */
 public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPageChangeListener{
-    Drawable checkedDrawble,defaultDrawable;
+    int checkedDrawableId, unCheckedDrawableId;
     int spacing;
     public ViewPagerIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
-        checkedDrawble=getResources().getDrawable(R.drawable.plib_ic_indicator_current);
-        defaultDrawable=getResources().getDrawable(R.drawable.plib_ic_indicator_notcurrent);
+        checkedDrawableId =R.drawable.plib_ic_indicator_current;
+        unCheckedDrawableId =R.drawable.plib_ic_indicator_notcurrent;
         setOrientation(LinearLayout.HORIZONTAL);
     }
     public void setPageNumber(int pageNumber) {
@@ -29,7 +28,7 @@ public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPage
             ImageView imageView=new ImageView(getContext());
             LinearLayout.LayoutParams params=new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.rightMargin=spacing;
-            imageView.setImageDrawable(defaultDrawable);
+            imageView.setImageResource(unCheckedDrawableId);
             imageView.setScaleType(ImageView.ScaleType.CENTER);
             imageView.setId(i);
 
@@ -37,20 +36,14 @@ public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPage
         }
     }
 
-    public Drawable getCheckedDrawble() {
-        return checkedDrawble;
+
+    public void setCheckedDrawableId(int checkedDrawableId) {
+        this.checkedDrawableId = checkedDrawableId;
     }
 
-    public void setCheckedDrawble(Drawable checkedDrawble) {
-        this.checkedDrawble = checkedDrawble;
-    }
 
-    public Drawable getDefaultDrawable() {
-        return defaultDrawable;
-    }
-
-    public void setDefaultDrawable(Drawable defaultDrawable) {
-        this.defaultDrawable = defaultDrawable;
+    public void setUnCheckedDrawableId(int unCheckedDrawableId) {
+        this.unCheckedDrawableId = unCheckedDrawableId;
     }
 
     @Override
@@ -65,9 +58,9 @@ public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPage
             ImageView child = (ImageView)getChildAt(i);
             int childId = child.getId();
             if(childId==position) {
-                child.setImageDrawable(checkedDrawble);
+                child.setImageResource(checkedDrawableId);
             }else{
-                child.setImageDrawable(defaultDrawable);
+                child.setImageResource(unCheckedDrawableId);
             }
         }
     }
