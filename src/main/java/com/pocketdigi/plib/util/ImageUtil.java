@@ -12,6 +12,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -813,6 +814,7 @@ public class ImageUtil {
         }
         return toRoundDrawable(res, src, width / 2.0f);
     }
+
 
 
     /**
