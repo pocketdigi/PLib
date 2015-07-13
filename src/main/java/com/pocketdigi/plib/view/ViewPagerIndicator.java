@@ -16,20 +16,24 @@ import com.pocketdigi.plib.R;
 public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPageChangeListener{
     int checkedDrawableId, unCheckedDrawableId;
     int spacing;
+    int iconSize=LayoutParams.WRAP_CONTENT;
     public ViewPagerIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
         checkedDrawableId =R.drawable.plib_ic_indicator_current;
         unCheckedDrawableId =R.drawable.plib_ic_indicator_notcurrent;
         setOrientation(LinearLayout.HORIZONTAL);
     }
+    public void setIconSize(int pixelSize) {
+        iconSize=pixelSize;
+    }
     public void setPageNumber(int pageNumber) {
         removeAllViews();
         for(int i=0;i<pageNumber;i++) {
             ImageView imageView=new ImageView(getContext());
-            LinearLayout.LayoutParams params=new LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams params=new LayoutParams(iconSize,iconSize);
             params.rightMargin=spacing;
             imageView.setImageResource(unCheckedDrawableId);
-            imageView.setScaleType(ImageView.ScaleType.CENTER);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageView.setId(i);
 
             addView(imageView, params);
