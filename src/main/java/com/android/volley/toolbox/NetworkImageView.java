@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2013 The Android Open Source Project
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -52,7 +52,7 @@ public class NetworkImageView extends ImageView {
     protected ImageContainer mImageContainer;
 
     //标记是否从网络载入,从本地载为false
-    boolean isLoadFromNetwork=true;
+    boolean isLoadFromNetwork = true;
 
     public NetworkImageView(Context context) {
         this(context, null);
@@ -64,6 +64,14 @@ public class NetworkImageView extends ImageView {
 
     public NetworkImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    public void setImageUrl(String url, ImageLoader imageLoader, LoadNetworkImageListener listener) {
+        mUrl = url;
+        mImageLoader = imageLoader;
+        networkImageListener = listener;
+        // The URL has potentially changed. See if we need to load it.
+        loadImageIfNecessary(false);
     }
 
     /**
@@ -81,9 +89,15 @@ public class NetworkImageView extends ImageView {
     public void setImageUrl(String url, ImageLoader imageLoader) {
         mUrl = url;
         mImageLoader = imageLoader;
-        isLoadFromNetwork=true;
+        isLoadFromNetwork = true;
         // The URL has potentially changed. See if we need to load it.
         loadImageIfNecessary(false);
+    }
+
+    private LoadNetworkImageListener networkImageListener;
+
+    public interface LoadNetworkImageListener {
+        void onSuccessResponse();
     }
 
     /**
@@ -115,7 +129,7 @@ public class NetworkImageView extends ImageView {
      * @param isInLayoutPass True if this was invoked from a layout pass, false otherwise.
      */
     protected void loadImageIfNecessary(final boolean isInLayoutPass) {
-        if(!isLoadFromNetwork){
+        if (!isLoadFromNetwork) {
             return;
         }
         int width = getWidth();
@@ -166,7 +180,7 @@ public class NetworkImageView extends ImageView {
         ImageContainer newContainer = mImageLoader.get(mUrl,
                 new ImageListener() {
                     @Override
-                    public void onErrorResponse(Request request,VolleyError error) {
+                    public void onErrorResponse(Request request, VolleyError error) {
                         if (mErrorImageId != 0) {
                             setImageResource(mErrorImageId);
                         }
@@ -190,6 +204,9 @@ public class NetworkImageView extends ImageView {
 
                         if (response.getBitmap() != null) {
                             setImageBitmap(response.getBitmap());
+                            if (networkImageListener != null) {
+                                networkImageListener.onSuccessResponse();
+                            }
                         } else if (mDefaultImageId != 0) {
                             setImageResource(mDefaultImageId);
                         }
@@ -201,10 +218,9 @@ public class NetworkImageView extends ImageView {
     }
 
     protected void setDefaultImageOrNull() {
-        if(mDefaultImageId != 0) {
+        if (mDefaultImageId != 0) {
             setImageResource(mDefaultImageId);
-        }
-        else {
+        } else {
             setImageBitmap(null);
         }
     }
@@ -241,6 +257,6 @@ public class NetworkImageView extends ImageView {
     @Override
     public void setImageResource(int resId) {
         super.setImageResource(resId);
-        isLoadFromNetwork=false;
+        isLoadFromNetwork = false;
     }
 }

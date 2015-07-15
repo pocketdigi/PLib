@@ -13,6 +13,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -27,6 +28,7 @@ import com.pocketdigi.plib.core.PLog;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * 图片处理util
@@ -835,6 +837,52 @@ public class ImageUtil {
         }
 
         return null;
+    }
+
+    /**
+     * 有的手机有的系统在拍照之后会自动对图片进行旋转，需要修正这个旋转的角度
+     *
+     * @param path
+     * @return
+     */
+    public static int readPictureRotateDegree(String path) {
+        int degree = 0;
+        try {
+            ExifInterface exifInterface = new ExifInterface(path);
+            int orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    degree = 90;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    degree = 180;
+                    break;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    degree = 270;
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return degree;
+    }
+
+    /**
+     * 旋转图片
+     *
+     * @param bitmap
+     * @param angle
+     * @return
+     */
+    public static Bitmap rotateImageView(Bitmap bitmap, int angle) {
+        if (angle == 0) {
+            return bitmap;
+        } else {
+            // 旋转图片
+            Matrix matrix = new Matrix();
+            matrix.postRotate(angle);
+            return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        }
     }
 
 
