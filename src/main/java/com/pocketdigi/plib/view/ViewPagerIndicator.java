@@ -26,9 +26,14 @@ public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPage
     public void setIconSize(int pixelSize) {
         iconSize=pixelSize;
     }
-    public void setPageNumber(int pageNumber) {
+
+    /**
+     * 设置总页数
+     * @param pageCount
+     */
+    public void setPageCount(int pageCount) {
         removeAllViews();
-        for(int i=0;i<pageNumber;i++) {
+        for(int i=0;i<pageCount;i++) {
             ImageView imageView=new ImageView(getContext());
             LinearLayout.LayoutParams params=new LayoutParams(iconSize,iconSize);
             params.rightMargin=spacing;
