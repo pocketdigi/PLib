@@ -57,11 +57,13 @@ public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPage
 
     @Override
     public void onPageSelected(int position) {
+
         int childCount=getChildCount();
+        int realPosition = position % childCount;
         for(int i=0;i<childCount;i++) {
             ImageView child = (ImageView)getChildAt(i);
             int childId = child.getId();
-            if(childId==position) {
+            if(childId==realPosition) {
                 child.setImageResource(checkedDrawableId);
             }else{
                 child.setImageResource(unCheckedDrawableId);
