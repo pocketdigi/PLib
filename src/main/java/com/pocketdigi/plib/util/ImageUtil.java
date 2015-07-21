@@ -541,7 +541,7 @@ public class ImageUtil {
         int inSampleSize = 1;
         if (real_ratio > target_ratio) {
             // 如果width太大，height太小，以width为基准，把realWidth设为maxWidth,realHeight缩放
-            inSampleSize = (int) realWidth / maxWidth;
+            inSampleSize = (int)Math.rint( realWidth / maxWidth);
         } else {
             inSampleSize = (int) realHeight / maxHeight;
         }
@@ -885,5 +885,15 @@ public class ImageUtil {
         }
     }
 
+
+//    public static Bitmap compressAccurate(String srcPath,int maxWidth, int maxHeight) {
+//        BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inJustDecodeBounds = true;
+//        Bitmap bitmap = BitmapFactory.decodeFile(srcPath, options);
+//        float compressScale = getCompressScale(bitmap.getWidth(), bitmap.getHeight(), maxWidth, maxHeight);
+//        float targetWidth=bitmap.getWidth()*compressScale;
+//        float targetHeight=bitmap.getHeight()*compressScale;
+//        Bitmap.createScaledBitmap(bitmap)
+//    }
 
 }
