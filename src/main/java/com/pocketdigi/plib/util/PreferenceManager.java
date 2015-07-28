@@ -55,6 +55,8 @@ public class PreferenceManager {
     public PreferenceManager putString(String key, String value) {
         if(!TextUtils.isEmpty(value)) {
             editor.putString(key, value);
+        }else{
+            editor.remove(key);
         }
         return this;
     }
