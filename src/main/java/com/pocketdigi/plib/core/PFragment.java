@@ -15,7 +15,8 @@ import org.androidannotations.annotations.EFragment;
  */
 public abstract class PFragment extends Fragment implements OnBackPressedListener {
     PFragmentActivity parentActivity;
-
+    boolean isFirstEnter=true;
+    int enterCount=0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +33,15 @@ public abstract class PFragment extends Fragment implements OnBackPressedListene
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         PLog.d(this, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
+        enterCount++;
+    }
+
+    /**
+     * 是否首次进入
+     * @return
+     */
+    public boolean isFirstEnter() {
+        return enterCount==1;
     }
 
     @Override
