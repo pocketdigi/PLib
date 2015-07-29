@@ -10,62 +10,69 @@ import com.pocketdigi.plib.core.PApplication;
  * Created by fhp on 14-9-8.
  */
 public class RuntimeUtil {
-    public static final String PREKEY_FIRSTRUN="firstrun";
-    private static boolean isFirstRun=true;
-    private static boolean isCurrentVersionFirstRun=true;
+    public static final String PREKEY_FIRSTRUN = "firstrun";
+    public static final String PREKEY_LASTRUNTIME = "last_run_time";
+    private static boolean isFirstRun = true;
+    private static boolean isCurrentVersionFirstRun = true;
+    //是否今天第一次启动
+    private static boolean isTodayFirstRun = false;
 
     /**
      * 读入配置，只能在启动时调用一次(MainActiviry)
      * 不要在Application中调用，因为退出应用，Application还在，再次启动不会重新读取
      */
-    public static void readSetting()
-    {
-        PreferenceManager manager=PreferenceManager.getDefaultManager();
-        isFirstRun=manager.getBoolean(PREKEY_FIRSTRUN,true);
-        isCurrentVersionFirstRun=manager.getBoolean(PREKEY_FIRSTRUN+getCurrentVersionCode(),true);
-        if(isFirstRun)
+    public static void readSetting() {
+        PreferenceManager manager = PreferenceManager.getDefaultManager();
+        isFirstRun = manager.getBoolean(PREKEY_FIRSTRUN, true);
+        isCurrentVersionFirstRun = manager.getBoolean(PREKEY_FIRSTRUN + getCurrentVersionCode(), true);
+        if (isFirstRun)
             setFirstRun();
-        if(isCurrentVersionFirstRun)
+        if (isCurrentVersionFirstRun)
             setCurrentVersionFirstRun();
+
+        long lastRunTime = manager.getLong(PREKEY_LASTRUNTIME, 0);
+        isTodayFirstRun = !DateUtils.isToday(lastRunTime);
+        manager.putLong(PREKEY_LASTRUNTIME,System.currentTimeMillis()).commit();
     }
+
     /**
      * 是否第一次运行
+     *
      * @return
      */
-    public static boolean isFirstRun()
-    {
+    public static boolean isFirstRun() {
         return isFirstRun;
     }
+
     /**
      * 是否当前版本的第一次运行
+     *
      * @return
      */
-    public static boolean isCurrentVersionFirstRun()
-    {
+    public static boolean isCurrentVersionFirstRun() {
         return isCurrentVersionFirstRun;
     }
 
     /**
      * 设置非第一次运行
      */
-    public static void setFirstRun()
-    {
-        PreferenceManager manager=PreferenceManager.getDefaultManager();
-        manager.putBoolean(PREKEY_FIRSTRUN,false).commit();
+    public static void setFirstRun() {
+        PreferenceManager manager = PreferenceManager.getDefaultManager();
+        manager.putBoolean(PREKEY_FIRSTRUN, false).commit();
     }
 
     /**
      * 设置当前版本为非第一次运行
      */
-    private static void setCurrentVersionFirstRun()
-    {
-        PreferenceManager manager=PreferenceManager.getDefaultManager();
-        manager.putBoolean(PREKEY_FIRSTRUN+getCurrentVersionCode(),false).commit();
+    private static void setCurrentVersionFirstRun() {
+        PreferenceManager manager = PreferenceManager.getDefaultManager();
+        manager.putBoolean(PREKEY_FIRSTRUN + getCurrentVersionCode(), false).commit();
     }
+
     /**
      * 获取当前客户端版本信息
      */
-    public static String getCurrentVersionName(){
+    public static String getCurrentVersionName() {
         String curVersionName = null;
         try {
             PackageInfo info = PApplication.getInstance().getPackageManager().getPackageInfo(PApplication.getInstance().getPackageName(), 0);
@@ -75,12 +82,13 @@ public class RuntimeUtil {
         }
         return curVersionName;
     }
+
     /**
      * 获取版本号
+     *
      * @return
      */
-    public static int getCurrentVersionCode()
-    {
+    public static int getCurrentVersionCode() {
         int versionCode = 0;
         try {
             PackageInfo info = PApplication.getInstance().getPackageManager().getPackageInfo(PApplication.getInstance().getPackageName(), 0);
@@ -91,6 +99,12 @@ public class RuntimeUtil {
         return versionCode;
     }
 
+    /**
+     * 是否今天第一次运行
+     */
+    public boolean isTodayFirstRun() {
+        return isTodayFirstRun;
+    }
 
 
 }
