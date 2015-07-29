@@ -102,7 +102,7 @@ public class RuntimeUtil {
     /**
      * 是否今天第一次运行
      */
-    public boolean isTodayFirstRun() {
+    public static boolean isTodayFirstRun() {
         return isTodayFirstRun;
     }
 
