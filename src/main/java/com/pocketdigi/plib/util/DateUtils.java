@@ -30,7 +30,7 @@ public class DateUtils {
 	}
 	/**
 	 * 把date转换成字符串
-	 * @param format　yyyy-MM-dd
+	 * @param format　yyyy-MM-dd HH:mm:ss
 	 * @param date
 	 * @return　2012-12-30
 	 */
