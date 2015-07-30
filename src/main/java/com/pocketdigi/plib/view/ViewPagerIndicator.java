@@ -9,6 +9,9 @@ import android.widget.LinearLayout;
 
 import com.pocketdigi.plib.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * ViewPager指示器 选中为白点，未选中为空心
  * Created by fhp on 15/3/3.
@@ -17,11 +20,13 @@ public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPage
     int checkedDrawableId, unCheckedDrawableId;
     int spacing;
     int iconSize=LayoutParams.WRAP_CONTENT;
+    List<ViewPager.OnPageChangeListener> pageChangeListeners;
     public ViewPagerIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
         checkedDrawableId =R.drawable.plib_ic_indicator_current;
         unCheckedDrawableId =R.drawable.plib_ic_indicator_notcurrent;
         setOrientation(LinearLayout.HORIZONTAL);
+        pageChangeListeners=new ArrayList<>();
     }
     public void setIconSize(int pixelSize) {
         iconSize=pixelSize;
@@ -45,6 +50,14 @@ public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPage
         }
     }
 
+    public void addOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
+        pageChangeListeners.add(listener);
+    }
+    public void removeOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
+        pageChangeListeners.remove(listener);
+    }
+
+
 
     public void setCheckedDrawableId(int checkedDrawableId) {
         this.checkedDrawableId = checkedDrawableId;
@@ -57,7 +70,11 @@ public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPage
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
+        if(pageChangeListeners.size()>0) {
+            for(ViewPager.OnPageChangeListener listener:pageChangeListeners) {
+                listener.onPageScrolled(position,positionOffset,positionOffsetPixels);
+            }
+        }
     }
 
     @Override
@@ -74,11 +91,20 @@ public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPage
                 child.setImageResource(unCheckedDrawableId);
             }
         }
+        if(pageChangeListeners.size()>0) {
+            for(ViewPager.OnPageChangeListener listener:pageChangeListeners) {
+                listener.onPageSelected(position);
+            }
+        }
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
-
+        if(pageChangeListeners.size()>0) {
+            for(ViewPager.OnPageChangeListener listener:pageChangeListeners) {
+                listener.onPageScrollStateChanged(state);
+            }
+        }
     }
 
     public int getSpacing() {
