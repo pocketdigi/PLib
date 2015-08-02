@@ -2,15 +2,15 @@ package com.pocketdigi.plib.download;
 
 import android.os.Handler;
 import android.os.Looper;
+
+import com.pocketdigi.plib.core.PApplication;
 import com.pocketdigi.plib.core.PLog;
 import com.pocketdigi.plib.util.FileUtils;
 import com.pocketdigi.plib.util.StorageUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.RandomAccess;
 
 /**
  * 下载Runnable
@@ -47,10 +47,18 @@ public class DownRunnable implements Runnable {
             e.printStackTrace();
         }
         taskStart();
-        if (StorageUtils.getAvailableSize() < 50 * 1024 * 1024) {
-            taskFailure(DownloadListener.ERROR_CODE_DISK_FULL);
-            return;
+        if(task.getSavePath().startsWith("/data/data")){
+            if (StorageUtils.getInternalStorageAvailableSize(PApplication.getInstance()) < 10 * 1024 * 1024) {
+                taskFailure(DownloadListener.ERROR_CODE_DISK_FULL);
+                return;
+            }
+        }else{
+            if (StorageUtils.getExternalStorageAvailableSize() < 50 * 1024 * 1024) {
+                taskFailure(DownloadListener.ERROR_CODE_DISK_FULL);
+                return;
+            }
         }
+
         PLog.d(this, "下载文件" + task.getUrl());
         PLog.d(this, "保存到" + tmpFilePath);
 
