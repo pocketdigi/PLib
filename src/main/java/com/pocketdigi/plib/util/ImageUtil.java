@@ -652,6 +652,9 @@ public class ImageUtil {
      * @return
      */
     public static Bitmap scaleBitmap(Bitmap bmp, int maxWidth, int maxHeight) {
+        if(maxWidth==0&&maxHeight==0) {
+            return bmp;
+        }
         float scale = getCompressScale(bmp.getWidth(), bmp.getHeight(), maxWidth, maxHeight);
         Matrix matrix = new Matrix();
         matrix.postScale(scale, scale); //长和宽放大缩小的比例

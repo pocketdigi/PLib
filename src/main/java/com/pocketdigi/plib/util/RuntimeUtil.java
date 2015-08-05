@@ -1,8 +1,15 @@
 package com.pocketdigi.plib.util;
 
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 
+import com.pocketdigi.plib.R;
 import com.pocketdigi.plib.core.PApplication;
 
 /**
@@ -104,6 +111,38 @@ public class RuntimeUtil {
      */
     public static boolean isTodayFirstRun() {
         return isTodayFirstRun;
+    }
+
+    /**
+     * 为程序创建桌面快捷方式
+     * @param mainActivity 主Activity
+     */
+    public static void addShortcut(Activity mainActivity,String appName,int iconResId){
+        boolean isInstallShortcut = false;
+        final ContentResolver cr = mainActivity.getContentResolver();
+        final String AUTHORITY ="com.android.launcher.settings";
+        final Uri CONTENT_URI = Uri.parse("content://" +AUTHORITY + "/favorites?notify=true");
+        Cursor c = cr.query(CONTENT_URI,new String[] {"title","iconResource" },"title=?",
+                new String[] {appName.trim()}, null);
+        if(c!=null && c.getCount()>0){
+            isInstallShortcut = true ;
+        }
+        if (c != null) {
+            c.close();
+        }
+        if(!isInstallShortcut) {
+            Intent shortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+            //快捷方式的名称
+            shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
+            shortcut.putExtra("duplicate", false); //不允许重复创建
+            Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
+            shortcutIntent.setClassName(mainActivity, mainActivity.getClass().getName());
+            shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+            //快捷方式的图标
+            Intent.ShortcutIconResource iconRes = Intent.ShortcutIconResource.fromContext(mainActivity, iconResId);
+            shortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconRes);
+            mainActivity.sendBroadcast(shortcut);
+        }
     }
 
 
