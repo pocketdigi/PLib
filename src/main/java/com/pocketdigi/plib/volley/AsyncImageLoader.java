@@ -178,8 +178,7 @@ public class AsyncImageLoader extends ImageLoader{
             // track it.
             Request<?> newRequest = new ImageRequest(imageContainer.getRequestUrl(), new Response.Listener<Bitmap>() {
                 @Override
-                public void onResponse(Request request,Bitmap response,boolean isFromCache) {
-                    PLog.d(this,"onResponse");
+                public void onResponse(Bitmap response) {
                     Bitmap bmpCompressed=ImageUtil.scaleBitmap(response, maxWidth, maxHeight);
 
                     ReadImageRequest cacheRequest = readImageRequestConcurrentHashMap.get(cacheKey);
@@ -193,7 +192,7 @@ public class AsyncImageLoader extends ImageLoader{
                 }
             }, 0, 0, Bitmap.Config.RGB_565, new Response.ErrorListener() {
                 @Override
-                public void onErrorResponse(Request request,VolleyError error) {
+                public void onErrorResponse(VolleyError error) {
                     PLog.d(this,"onErrorResponse");
                     onGetImageError(cacheKey, error);
                     readFailure(cacheKey,error);
@@ -205,11 +204,11 @@ public class AsyncImageLoader extends ImageLoader{
 
     }
 
-    /**
-     * 清除缓存
-     */
-    public void clearCache()
-    {
-        mCache.clear();
-    }
+//    /**
+//     * 清除缓存
+//     */
+//    public void clearCache()
+//    {
+//        mCache.clear();
+//    }
 }

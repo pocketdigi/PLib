@@ -19,9 +19,11 @@ package com.android.volley;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -31,11 +33,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * A request dispatch queue with a thread pool of dispatchers.
  *
- * Calling {@link #add(com.android.volley.Request)} will enqueue the given Request for dispatch,
+ * Calling {@link #add(Request)} will enqueue the given Request for dispatch,
  * resolving from either cache or network on a worker thread, and then delivering
  * a parsed response on the main thread.
  */
 public class RequestQueue {
+
+    /** Callback interface for completed requests. */
+    public static interface RequestFinishedListener<T> {
+        /** Called when a request has finished processing. */
+        public void onRequestFinished(Request<T> request);
+    }
 
     /** Used for generating monotonically-increasing sequence numbers for requests. */
     private AtomicInteger mSequenceGenerator = new AtomicInteger();
@@ -85,6 +93,9 @@ public class RequestQueue {
 
     /** The cache dispatcher. */
     private CacheDispatcher mCacheDispatcher;
+
+    private List<RequestFinishedListener> mFinishedListeners =
+            new ArrayList<RequestFinishedListener>();
 
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
@@ -164,7 +175,7 @@ public class RequestQueue {
     }
 
     /**
-     * Gets the {@link com.android.volley.Cache} instance being used.
+     * Gets the {@link Cache} instance being used.
      */
     public Cache getCache() {
         return mCache;
@@ -172,7 +183,7 @@ public class RequestQueue {
 
     /**
      * A simple predicate or filter interface for Requests, for use by
-     * {@link com.android.volley.RequestQueue#cancelAll(com.android.volley.RequestQueue.RequestFilter)}.
+     * {@link RequestQueue#cancelAll(RequestFilter)}.
      */
     public interface RequestFilter {
         public boolean apply(Request<?> request);
@@ -255,16 +266,21 @@ public class RequestQueue {
     }
 
     /**
-     * Called from {@link com.android.volley.Request#finish(String)}, indicating that processing of the given request
+     * Called from {@link Request#finish(String)}, indicating that processing of the given request
      * has finished.
      *
      * <p>Releases waiting requests for <code>request.getCacheKey()</code> if
      *      <code>request.shouldCache()</code>.</p>
      */
-    void finish(Request<?> request) {
+    <T> void finish(Request<T> request) {
         // Remove from the set of requests currently being processed.
         synchronized (mCurrentRequests) {
             mCurrentRequests.remove(request);
+        }
+        synchronized (mFinishedListeners) {
+          for (RequestFinishedListener<T> listener : mFinishedListeners) {
+            listener.onRequestFinished(request);
+          }
         }
 
         if (request.shouldCache()) {
@@ -284,7 +300,18 @@ public class RequestQueue {
         }
     }
 
-    public Network getNetwork() {
-        return mNetwork;
+    public  <T> void addRequestFinishedListener(RequestFinishedListener<T> listener) {
+      synchronized (mFinishedListeners) {
+        mFinishedListeners.add(listener);
+      }
+    }
+
+    /**
+     * Remove a RequestFinishedListener. Has no effect if listener was not previously added.
+     */
+    public  <T> void removeRequestFinishedListener(RequestFinishedListener<T> listener) {
+      synchronized (mFinishedListeners) {
+        mFinishedListeners.remove(listener);
+      }
     }
 }

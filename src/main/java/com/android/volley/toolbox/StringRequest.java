@@ -21,8 +21,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
-import com.pocketdigi.plib.core.PLog;
-import com.pocketdigi.plib.volley.AlwaysCacheHttpHeaderParser;
 
 import java.io.UnsupportedEncodingException;
 
@@ -30,15 +28,12 @@ import java.io.UnsupportedEncodingException;
  * A canned request for retrieving the response body at a given URL as a String.
  */
 public class StringRequest extends Request<String> {
-    //默认缓存1天
-    long cacheMaxAge =60*60*24*1000*1;
-
     private final Listener<String> mListener;
 
     /**
      * Creates a new request with the given method.
      *
-     * @param method the request {@link com.android.volley.Request.Method} to use
+     * @param method the request {@link Method} to use
      * @param url URL to fetch the string at
      * @param listener Listener to receive the String response
      * @param errorListener Error listener, or null to ignore errors
@@ -61,8 +56,8 @@ public class StringRequest extends Request<String> {
     }
 
     @Override
-    protected void deliverResponse(String response,boolean isFromCache) {
-        mListener.onResponse(this,response,isFromCache);
+    protected void deliverResponse(String response) {
+        mListener.onResponse(response);
     }
 
     @Override
@@ -73,16 +68,6 @@ public class StringRequest extends Request<String> {
         } catch (UnsupportedEncodingException e) {
             parsed = new String(response.data);
         }
-        PLog.d("http",getUrl());
-        PLog.d("http",parsed);
-        return Response.success(parsed, AlwaysCacheHttpHeaderParser.parseCacheHeaders(response, cacheMaxAge),response.notModified);
-    }
-
-    /**
-     * 设置缓存寿命
-     * @param cacheMaxAge 毫秒
-     */
-    public void setCacheMaxAge(long cacheMaxAge) {
-        this.cacheMaxAge = cacheMaxAge;
+        return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
     }
 }

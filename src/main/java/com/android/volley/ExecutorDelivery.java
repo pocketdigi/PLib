@@ -29,7 +29,7 @@ public class ExecutorDelivery implements ResponseDelivery {
 
     /**
      * Creates a new response delivery interface.
-     * @param handler {@link android.os.Handler} to post responses on
+     * @param handler {@link Handler} to post responses on
      */
     public ExecutorDelivery(final Handler handler) {
         // Make an Executor that just wraps the handler.
@@ -96,7 +96,7 @@ public class ExecutorDelivery implements ResponseDelivery {
 
             // Deliver a normal response or error, depending.
             if (mResponse.isSuccess()) {
-                mRequest.deliverResponse(mResponse.result,mResponse.isFromCache);
+                mRequest.deliverResponse(mResponse.result);
             } else {
                 mRequest.deliverError(mResponse.error);
             }

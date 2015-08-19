@@ -26,7 +26,7 @@ public class Response<T> {
     /** Callback interface for delivering parsed responses. */
     public interface Listener<T> {
         /** Called when a response is received. */
-        public void onResponse(Request request,T response, boolean isFromCache);
+        public void onResponse(T response);
     }
 
     /** Callback interface for delivering error responses. */
@@ -35,12 +35,12 @@ public class Response<T> {
          * Callback method that an error has been occurred with the
          * provided error code and optional user-readable message.
          */
-        public void onErrorResponse(Request request,VolleyError error);
+        public void onErrorResponse(VolleyError error);
     }
 
     /** Returns a successful response containing the parsed result. */
-    public static <T> Response<T> success(T result, Cache.Entry cacheEntry,boolean isFromCache) {
-        return new Response<T>(result, cacheEntry,isFromCache);
+    public static <T> Response<T> success(T result, Cache.Entry cacheEntry) {
+        return new Response<T>(result, cacheEntry);
     }
 
     /**
@@ -62,7 +62,7 @@ public class Response<T> {
 
     /** True if this response was a soft-expired one and a second one MAY be coming. */
     public boolean intermediate = false;
-    public boolean isFromCache=false;
+
     /**
      * Returns whether this response is considered successful.
      */
@@ -71,11 +71,10 @@ public class Response<T> {
     }
 
 
-    private Response(T result, Cache.Entry cacheEntry,boolean isFromCache) {
+    private Response(T result, Cache.Entry cacheEntry) {
         this.result = result;
         this.cacheEntry = cacheEntry;
         this.error = null;
-        this.isFromCache=isFromCache;
     }
 
     private Response(VolleyError error) {

@@ -69,7 +69,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     /** URL of this request. */
     private final String mUrl;
 
-    /** Default tag for {@link android.net.TrafficStats}. */
+    /** Default tag for {@link TrafficStats}. */
     private final int mDefaultTrafficStatsTag;
 
     /** Listener interface for errors. */
@@ -89,12 +89,6 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     /** Whether or not a response has been delivered for this request yet. */
     private boolean mResponseDelivered = false;
-
-    // A cheap variant of request tracing used to dump slow requests.
-    private long mRequestBirthTime = 0;
-
-    /** Threshold at which we should log the request (even when debug logging is not enabled). */
-    private static final long SLOW_REQUEST_THRESHOLD_MS = 3000;
 
     /** The retry policy for this request. */
     private RetryPolicy mRetryPolicy;
@@ -123,7 +117,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     }
 
     /**
-     * Creates a new request with the given method (one of the values from {@link com.android.volley.Request.Method}),
+     * Creates a new request with the given method (one of the values from {@link Method}),
      * URL, and error listener.  Note that the normal response listener is not provided here as
      * delivery of responses is provided by subclasses, who have a better idea of how to deliver
      * an already-parsed response.
@@ -138,7 +132,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     }
 
     /**
-     * Return the method for this request.  Can be one of the values in {@link com.android.volley.Request.Method}.
+     * Return the method for this request.  Can be one of the values in {@link Method}.
      */
     public int getMethod() {
         return mMethod;
@@ -146,7 +140,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     /**
      * Set a tag on this request. Can be used to cancel all requests with this
-     * tag by {@link com.android.volley.RequestQueue#cancelAll(Object)}.
+     * tag by {@link RequestQueue#cancelAll(Object)}.
      *
      * @return This Request object to allow for chaining.
      */
@@ -157,7 +151,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     /**
      * Returns this request's tag.
-     * @see com.android.volley.Request#setTag(Object)
+     * @see Request#setTag(Object)
      */
     public Object getTag() {
         return mTag;
@@ -171,7 +165,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     }
 
     /**
-     * @return A tag for use with {@link android.net.TrafficStats#setThreadStatsTag(int)}
+     * @return A tag for use with {@link TrafficStats#setThreadStatsTag(int)}
      */
     public int getTrafficStatsTag() {
         return mDefaultTrafficStatsTag;
@@ -209,8 +203,6 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     public void addMarker(String tag) {
         if (MarkerLog.ENABLED) {
             mEventLog.add(tag, Thread.currentThread().getId());
-        } else if (mRequestBirthTime == 0) {
-            mRequestBirthTime = SystemClock.elapsedRealtime();
         }
     }
 
@@ -241,11 +233,6 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
             mEventLog.add(tag, threadId);
             mEventLog.finish(this.toString());
-        } else {
-            long requestTime = SystemClock.elapsedRealtime() - mRequestBirthTime;
-            if (requestTime >= SLOW_REQUEST_THRESHOLD_MS) {
-                VolleyLog.d("%d ms: %s", requestTime, this.toString());
-            }
         }
     }
 
@@ -261,7 +248,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     }
 
     /**
-     * Sets the sequence number of this request.  Used by {@link com.android.volley.RequestQueue}.
+     * Sets the sequence number of this request.  Used by {@link RequestQueue}.
      *
      * @return This Request object to allow for chaining.
      */
@@ -328,9 +315,9 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     /**
      * Returns a list of extra HTTP headers to go along with this request. Can
-     * throw {@link com.android.volley.AuthFailureError} as authentication may be required to
+     * throw {@link AuthFailureError} as authentication may be required to
      * provide these values.
-     * @throws com.android.volley.AuthFailureError In the event of auth failure
+     * @throws AuthFailureError In the event of auth failure
      */
     public Map<String, String> getHeaders() throws AuthFailureError {
         return Collections.emptyMap();
@@ -338,12 +325,12 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     /**
      * Returns a Map of POST parameters to be used for this request, or null if
-     * a simple GET should be used.  Can throw {@link com.android.volley.AuthFailureError} as
+     * a simple GET should be used.  Can throw {@link AuthFailureError} as
      * authentication may be required to provide these values.
      *
      * <p>Note that only one of getPostParams() and getPostBody() can return a non-null
      * value.</p>
-     * @throws com.android.volley.AuthFailureError In the event of auth failure
+     * @throws AuthFailureError In the event of auth failure
      *
      * @deprecated Use {@link #getParams()} instead.
      */
@@ -382,7 +369,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     /**
      * Returns the raw POST body to be sent.
      *
-     * @throws com.android.volley.AuthFailureError In the event of auth failure
+     * @throws AuthFailureError In the event of auth failure
      *
      * @deprecated Use {@link #getBody()} instead.
      */
@@ -401,11 +388,11 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     /**
      * Returns a Map of parameters to be used for a POST or PUT request.  Can throw
-     * {@link com.android.volley.AuthFailureError} as authentication may be required to provide these values.
+     * {@link AuthFailureError} as authentication may be required to provide these values.
      *
      * <p>Note that you can directly override {@link #getBody()} for custom data.</p>
      *
-     * @throws com.android.volley.AuthFailureError in the event of auth failure
+     * @throws AuthFailureError in the event of auth failure
      */
     protected Map<String, String> getParams() throws AuthFailureError {
         return null;
@@ -427,6 +414,9 @@ public abstract class Request<T> implements Comparable<Request<T>> {
         return DEFAULT_PARAMS_ENCODING;
     }
 
+    /**
+     * Returns the content type of the POST or PUT body.
+     */
     public String getBodyContentType() {
         return "application/x-www-form-urlencoded; charset=" + getParamsEncoding();
     }
@@ -434,7 +424,11 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     /**
      * Returns the raw POST or PUT body to be sent.
      *
-     * @throws com.android.volley.AuthFailureError in the event of auth failure
+     * <p>By default, the body consists of the request parameters in
+     * application/x-www-form-urlencoded format. When overriding this method, consider overriding
+     * {@link #getBodyContentType()} as well to match the new body format.
+     *
+     * @throws AuthFailureError in the event of auth failure
      */
     public byte[] getBody() throws AuthFailureError {
         Map<String, String> params = getParams();
@@ -491,7 +485,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     }
 
     /**
-     * Returns the {@link com.android.volley.Request.Priority} of this request; {@link com.android.volley.Request.Priority#NORMAL} by default.
+     * Returns the {@link Priority} of this request; {@link Priority#NORMAL} by default.
      */
     public Priority getPriority() {
         return Priority.NORMAL;
@@ -500,7 +494,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     /**
      * Returns the socket timeout in milliseconds per retry attempt. (This value can be changed
      * per retry attempt if a backoff is specified via backoffTimeout()). If there are no retry
-     * attempts remaining, this will cause delivery of a {@link com.android.volley.TimeoutError} error.
+     * attempts remaining, this will cause delivery of a {@link TimeoutError} error.
      */
     public final int getTimeoutMs() {
         return mRetryPolicy.getCurrentTimeout();
@@ -555,9 +549,9 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * response to their listeners.  The given response is guaranteed to
      * be non-null; responses that fail to parse are not delivered.
      * @param response The parsed response returned by
-     * {@link #parseNetworkResponse(com.android.volley.NetworkResponse)}
+     * {@link #parseNetworkResponse(NetworkResponse)}
      */
-    abstract protected void deliverResponse(T response,boolean isFromCache);
+    abstract protected void deliverResponse(T response);
 
     /**
      * Delivers error message to the ErrorListener that the Request was
@@ -567,7 +561,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      */
     public void deliverError(VolleyError error) {
         if (mErrorListener != null) {
-            mErrorListener.onErrorResponse(this,error);
+            mErrorListener.onErrorResponse(error);
         }
     }
 

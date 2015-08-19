@@ -82,7 +82,6 @@ public class L2LRUImageCache implements ImageLoader.ImageCache{
         putBitmapToDiskLruCache(key,bitmap);
     }
 
-    @Override
     public void clear() {
         lruCache.evictAll();
         FileUtils.deleteFile(cacheFullPath);

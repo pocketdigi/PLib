@@ -23,6 +23,7 @@ import com.android.volley.Request.Method;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.entity.BasicHttpEntity;
@@ -44,12 +45,12 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 
 /**
- * An {@link com.android.volley.toolbox.HttpStack} based on {@link java.net.HttpURLConnection}.
+ * An {@link HttpStack} based on {@link HttpURLConnection}.
  */
 public class HurlStack implements HttpStack {
 
     private static final String HEADER_CONTENT_TYPE = "Content-Type";
-    String lastRequestSessionId;
+
     /**
      * An interface for transforming URLs before use.
      */
@@ -115,29 +116,34 @@ public class HurlStack implements HttpStack {
         StatusLine responseStatus = new BasicStatusLine(protocolVersion,
                 connection.getResponseCode(), connection.getResponseMessage());
         BasicHttpResponse response = new BasicHttpResponse(responseStatus);
-        response.setEntity(entityFromConnection(connection));
+        if (hasResponseBody(request.getMethod(), responseStatus.getStatusCode())) {
+            response.setEntity(entityFromConnection(connection));
+        }
         for (Entry<String, List<String>> header : connection.getHeaderFields().entrySet()) {
             if (header.getKey() != null) {
                 Header h = new BasicHeader(header.getKey(), header.getValue().get(0));
                 response.addHeader(h);
-                if(header.getKey().equals("jsessionid"))
-                {
-                    if(header.getValue().size()>0) {
-                        lastRequestSessionId = header.getValue().get(0);
-                    }
-                }
             }
         }
         return response;
     }
 
-    @Override
-    public String getLastRequestSessionId() {
-        return lastRequestSessionId;
+    /**
+     * Checks if a response message contains a body.
+     * @see <a href="https://tools.ietf.org/html/rfc7230#section-3.3">RFC 7230 section 3.3</a>
+     * @param requestMethod request method
+     * @param responseCode response status code
+     * @return whether the response has a body
+     */
+    private static boolean hasResponseBody(int requestMethod, int responseCode) {
+        return requestMethod != Request.Method.HEAD
+            && !(HttpStatus.SC_CONTINUE <= responseCode && responseCode < HttpStatus.SC_OK)
+            && responseCode != HttpStatus.SC_NO_CONTENT
+            && responseCode != HttpStatus.SC_NOT_MODIFIED;
     }
 
     /**
-     * Initializes an {@link org.apache.http.HttpEntity} from the given {@link java.net.HttpURLConnection}.
+     * Initializes an {@link HttpEntity} from the given {@link HttpURLConnection}.
      * @param connection
      * @return an HttpEntity populated with data from <code>connection</code>.
      */
@@ -157,17 +163,17 @@ public class HurlStack implements HttpStack {
     }
 
     /**
-     * Create an {@link java.net.HttpURLConnection} for the specified {@code url}.
+     * Create an {@link HttpURLConnection} for the specified {@code url}.
      */
     protected HttpURLConnection createConnection(URL url) throws IOException {
         return (HttpURLConnection) url.openConnection();
     }
 
     /**
-     * Opens an {@link java.net.HttpURLConnection} with parameters.
+     * Opens an {@link HttpURLConnection} with parameters.
      * @param url
      * @return an open connection
-     * @throws java.io.IOException
+     * @throws IOException
      */
     private HttpURLConnection openConnection(URL url, Request<?> request) throws IOException {
         HttpURLConnection connection = createConnection(url);

@@ -20,6 +20,7 @@ import android.annotation.TargetApi;
 import android.net.TrafficStats;
 import android.os.Build;
 import android.os.Process;
+import android.os.SystemClock;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -27,9 +28,9 @@ import java.util.concurrent.BlockingQueue;
  * Provides a thread for performing network dispatch from a queue of requests.
  *
  * Requests added to the specified queue are processed from the network via a
- * specified {@link com.android.volley.Network} interface. Responses are committed to cache, if
- * eligible, using a specified {@link com.android.volley.Cache} interface. Valid responses and
- * errors are posted back to the caller via a {@link com.android.volley.ResponseDelivery}.
+ * specified {@link Network} interface. Responses are committed to cache, if
+ * eligible, using a specified {@link Cache} interface. Valid responses and
+ * errors are posted back to the caller via a {@link ResponseDelivery}.
  */
 public class NetworkDispatcher extends Thread {
     /** The queue of requests to service. */
@@ -81,8 +82,9 @@ public class NetworkDispatcher extends Thread {
     @Override
     public void run() {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-        Request<?> request;
         while (true) {
+            long startTimeMs = SystemClock.elapsedRealtime();
+            Request<?> request;
             try {
                 // Take a request from the queue.
                 request = mQueue.take();
@@ -132,10 +134,13 @@ public class NetworkDispatcher extends Thread {
                 request.markDelivered();
                 mDelivery.postResponse(request, response);
             } catch (VolleyError volleyError) {
+                volleyError.setNetworkTimeMs(SystemClock.elapsedRealtime() - startTimeMs);
                 parseAndDeliverNetworkError(request, volleyError);
             } catch (Exception e) {
                 VolleyLog.e(e, "Unhandled exception %s", e.toString());
-                mDelivery.postError(request, new VolleyError(e));
+                VolleyError volleyError = new VolleyError(e);
+                volleyError.setNetworkTimeMs(SystemClock.elapsedRealtime() - startTimeMs);
+                mDelivery.postError(request, volleyError);
             }
         }
     }

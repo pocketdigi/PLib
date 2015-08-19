@@ -26,7 +26,7 @@ public interface Cache {
     /**
      * Retrieves an entry from the cache.
      * @param key Cache key
-     * @return An {@link com.android.volley.Cache.Entry} or null in the event of a cache miss
+     * @return An {@link Entry} or null in the event of a cache miss
      */
     public Entry get(String key);
 
@@ -73,6 +73,9 @@ public interface Cache {
 
         /** Date of this response as reported by the server. */
         public long serverDate;
+
+        /** The last modified date for the requested object. */
+        public long lastModified;
 
         /** TTL for this record. */
         public long ttl;

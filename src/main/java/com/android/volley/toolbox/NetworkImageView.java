@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2013 The Android Open Source Project
- * <p/>
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,11 +21,10 @@ import android.util.AttributeSet;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 
-import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader.ImageContainer;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
-import com.pocketdigi.plib.volley.AsyncImageLoader;
+import com.pocketdigi.plib.core.PApplication;
 
 /**
  * Handles fetching an image from a URL as well as the life-cycle of the
@@ -33,26 +32,23 @@ import com.pocketdigi.plib.volley.AsyncImageLoader;
  */
 public class NetworkImageView extends ImageView {
     /** The URL of the network image to load */
-    protected String mUrl;
+    public String mUrl;
 
     /**
      * Resource ID of the image to be used as a placeholder until the network image is loaded.
      */
-    protected int mDefaultImageId;
+    public int mDefaultImageId;
 
     /**
      * Resource ID of the image to be used if the network response fails.
      */
-    protected int mErrorImageId;
+    public int mErrorImageId;
 
     /** Local copy of the ImageLoader. */
-    protected ImageLoader mImageLoader;
+    public ImageLoader mImageLoader;
 
     /** Current ImageContainer. (either in-flight or finished) */
-    protected ImageContainer mImageContainer;
-
-    //标记是否从网络载入,从本地载为false
-    boolean isLoadFromNetwork = true;
+    public ImageContainer mImageContainer;
 
     public NetworkImageView(Context context) {
         this(context, null);
@@ -66,21 +62,13 @@ public class NetworkImageView extends ImageView {
         super(context, attrs, defStyle);
     }
 
-    public void setImageUrl(String url, ImageLoader imageLoader, LoadNetworkImageListener listener) {
-        mUrl = url;
-        mImageLoader = imageLoader;
-        networkImageListener = listener;
-        // The URL has potentially changed. See if we need to load it.
-        loadImageIfNecessary(false);
-    }
-
     /**
      * Sets URL of the image that should be loaded into this view. Note that calling this will
      * immediately either set the cached image (if available) or the default image specified by
-     * {@link com.android.volley.toolbox.NetworkImageView#setDefaultImageResId(int)} on the view.
+     * {@link NetworkImageView#setDefaultImageResId(int)} on the view.
      *
-     * NOTE: If applicable, {@link com.android.volley.toolbox.NetworkImageView#setDefaultImageResId(int)} and
-     * {@link com.android.volley.toolbox.NetworkImageView#setErrorImageResId(int)} should be called prior to calling
+     * NOTE: If applicable, {@link NetworkImageView#setDefaultImageResId(int)} and
+     * {@link NetworkImageView#setErrorImageResId(int)} should be called prior to calling
      * this function.
      *
      * @param url The URL that should be loaded into this ImageView.
@@ -89,23 +77,12 @@ public class NetworkImageView extends ImageView {
     public void setImageUrl(String url, ImageLoader imageLoader) {
         mUrl = url;
         mImageLoader = imageLoader;
-        isLoadFromNetwork = true;
         // The URL has potentially changed. See if we need to load it.
         loadImageIfNecessary(false);
     }
 
-    private LoadNetworkImageListener networkImageListener;
-
-    public interface LoadNetworkImageListener {
-        void onSuccessResponse();
-    }
-
-    /**
-     * 使用默认的ImageLoader加载图片
-     * @param url
-     */
     public void setImageUrl(String url) {
-        setImageUrl(url, AsyncImageLoader.getDefaultImageLoader());
+        setImageUrl(url, PApplication.getInstance().getImageLoader());
     }
 
     /**
@@ -129,11 +106,9 @@ public class NetworkImageView extends ImageView {
      * @param isInLayoutPass True if this was invoked from a layout pass, false otherwise.
      */
     protected void loadImageIfNecessary(final boolean isInLayoutPass) {
-        if (!isLoadFromNetwork) {
-            return;
-        }
         int width = getWidth();
         int height = getHeight();
+        ScaleType scaleType = getScaleType();
 
         boolean wrapWidth = false, wrapHeight = false;
         if (getLayoutParams() != null) {
@@ -180,7 +155,7 @@ public class NetworkImageView extends ImageView {
         ImageContainer newContainer = mImageLoader.get(mUrl,
                 new ImageListener() {
                     @Override
-                    public void onErrorResponse(Request request, VolleyError error) {
+                    public void onErrorResponse(VolleyError error) {
                         if (mErrorImageId != 0) {
                             setImageResource(mErrorImageId);
                         }
@@ -204,23 +179,21 @@ public class NetworkImageView extends ImageView {
 
                         if (response.getBitmap() != null) {
                             setImageBitmap(response.getBitmap());
-                            if (networkImageListener != null) {
-                                networkImageListener.onSuccessResponse();
-                            }
                         } else if (mDefaultImageId != 0) {
                             setImageResource(mDefaultImageId);
                         }
                     }
-                }, maxWidth, maxHeight);
+                }, maxWidth, maxHeight, scaleType);
 
         // update the ImageContainer to be the new bitmap container.
         mImageContainer = newContainer;
     }
 
-    protected void setDefaultImageOrNull() {
-        if (mDefaultImageId != 0) {
+    public void setDefaultImageOrNull() {
+        if(mDefaultImageId != 0) {
             setImageResource(mDefaultImageId);
-        } else {
+        }
+        else {
             setImageBitmap(null);
         }
     }
@@ -248,15 +221,5 @@ public class NetworkImageView extends ImageView {
     protected void drawableStateChanged() {
         super.drawableStateChanged();
         invalidate();
-    }
-
-    /**
-     * 从本地加载
-     * @param resId
-     */
-    @Override
-    public void setImageResource(int resId) {
-        super.setImageResource(resId);
-        isLoadFromNetwork = false;
     }
 }

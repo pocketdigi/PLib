@@ -83,7 +83,7 @@ public class ReadImageRequest {
                         continue;
                     }
                     container.mBitmap = mCacheBitmap;
-                    container.mListener.onErrorResponse(null, error);
+                    container.mListener.onErrorResponse(error);
                 }
 //                PLog.d(this,"读图结束 分发结束"+cacheKey);
             }

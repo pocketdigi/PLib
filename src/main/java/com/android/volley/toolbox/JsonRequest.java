@@ -32,8 +32,8 @@ import java.io.UnsupportedEncodingException;
  * @param <T> JSON type of response expected
  */
 public abstract class JsonRequest<T> extends Request<T> {
-    /** Charset for request. */
-    private static final String PROTOCOL_CHARSET = "utf-8";
+    /** Default charset for JSON request. */
+    protected static final String PROTOCOL_CHARSET = "utf-8";
 
     /** Content type for request. */
     private static final String PROTOCOL_CONTENT_TYPE =
@@ -46,7 +46,7 @@ public abstract class JsonRequest<T> extends Request<T> {
      * Deprecated constructor for a JsonRequest which defaults to GET unless {@link #getPostBody()}
      * or {@link #getPostParams()} is overridden (which defaults to POST).
      *
-     * @deprecated Use {@link #JsonRequest(int, String, String, com.android.volley.Response.Listener, com.android.volley.Response.ErrorListener)}.
+     * @deprecated Use {@link #JsonRequest(int, String, String, Listener, ErrorListener)}.
      */
     public JsonRequest(String url, String requestBody, Listener<T> listener,
             ErrorListener errorListener) {
@@ -61,8 +61,8 @@ public abstract class JsonRequest<T> extends Request<T> {
     }
 
     @Override
-    protected void deliverResponse(T response,boolean isFromCache) {
-        mListener.onResponse(this,response,isFromCache);
+    protected void deliverResponse(T response) {
+        mListener.onResponse(response);
     }
 
     @Override

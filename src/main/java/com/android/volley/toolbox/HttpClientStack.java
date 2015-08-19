@@ -20,7 +20,6 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Request.Method;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -46,13 +45,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An HttpStack that performs request over an {@link org.apache.http.client.HttpClient}.
+ * An HttpStack that performs request over an {@link HttpClient}.
  */
 public class HttpClientStack implements HttpStack {
     protected final HttpClient mClient;
 
     private final static String HEADER_CONTENT_TYPE = "Content-Type";
-    String lastRequestSessionId;
+
     public HttpClientStack(HttpClient client) {
         mClient = client;
     }
@@ -85,12 +84,7 @@ public class HttpClientStack implements HttpStack {
         // data collection and possibly different for wifi vs. 3G.
         HttpConnectionParams.setConnectionTimeout(httpParams, 5000);
         HttpConnectionParams.setSoTimeout(httpParams, timeoutMs);
-        HttpResponse response = mClient.execute(httpRequest);
-        Header sessionIdHeader=httpRequest.getFirstHeader("jsessionid");
-        if(sessionIdHeader!=null) {
-            lastRequestSessionId = sessionIdHeader.getValue();
-        }
-        return response;
+        return mClient.execute(httpRequest);
     }
 
     /**
@@ -196,16 +190,5 @@ public class HttpClientStack implements HttpStack {
             return METHOD_NAME;
         }
 
-    }
-
-
-    /**
-     * 获取最后一个请求的sessionID
-     * @return
-     */
-    @Override
-    public String getLastRequestSessionId()
-    {
-        return lastRequestSessionId;
     }
 }

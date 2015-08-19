@@ -5,7 +5,11 @@ import android.app.Application;
 import android.app.Service;
 import android.os.Bundle;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.Volley;
 import com.pocketdigi.plib.util.DeviceUtils;
+import com.pocketdigi.plib.volley.L2LRUImageCache;
 
 import de.greenrobot.event.EventBus;
 
@@ -24,7 +28,7 @@ public abstract class PApplication extends Application{
      * 在隐藏后台时保存参数
      */
     Bundle instanceState;
-
+    ImageLoader imageLoader;
     public static PApplication getInstance()
     {
         return instance;
@@ -38,6 +42,9 @@ public abstract class PApplication extends Application{
         services=new ArrayList<>();
         instance=this;
         instanceState=new Bundle();
+        RequestQueue imageRequestQueue= Volley.newRequestQueue(this);
+        imageRequestQueue.start();
+        imageLoader=new ImageLoader(imageRequestQueue,new L2LRUImageCache(this));
     }
 
     void activityCreate(Activity activity)
@@ -131,5 +138,9 @@ public abstract class PApplication extends Application{
     public boolean getBooleanState(String key)
     {
         return instanceState.getBoolean(key);
+    }
+
+    public ImageLoader getImageLoader() {
+        return imageLoader;
     }
 }

@@ -87,7 +87,7 @@ public class RoundCornerNetworkImageView extends NetworkImageView {
      * @param isInLayoutPass True if this was invoked from a layout pass, false otherwise.
      */
     @Override
-    protected void loadImageIfNecessary(final boolean isInLayoutPass) {
+    public void loadImageIfNecessary(final boolean isInLayoutPass) {
         int width = getWidth();
         int height = getHeight();
 
@@ -137,7 +137,7 @@ public class RoundCornerNetworkImageView extends NetworkImageView {
         ImageLoader.ImageContainer newContainer = mImageLoader.get(mUrl,
                 new ImageLoader.ImageListener() {
                     @Override
-                    public void onErrorResponse(Request request,VolleyError error) {
+                    public void onErrorResponse(VolleyError error) {
                         if (mErrorImageId != 0) {
                             setImageResource(mErrorImageId);
                         }

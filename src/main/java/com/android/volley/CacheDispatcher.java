@@ -25,9 +25,9 @@ import java.util.concurrent.BlockingQueue;
  *
  * Requests added to the specified cache queue are resolved from cache.
  * Any deliverable response is posted back to the caller via a
- * {@link com.android.volley.ResponseDelivery}.  Cache misses and responses that require
+ * {@link ResponseDelivery}.  Cache misses and responses that require
  * refresh are enqueued on the specified network queue for processing
- * by a {@link com.android.volley.NetworkDispatcher}.
+ * by a {@link NetworkDispatcher}.
  */
 public class CacheDispatcher extends Thread {
 
@@ -121,7 +121,6 @@ public class CacheDispatcher extends Thread {
 
                 if (!entry.refreshNeeded()) {
                     // Completely unexpired cache hit. Just deliver the response.
-                    response.isFromCache=true;
                     mDelivery.postResponse(request, response);
                 } else {
                     // Soft-expired cache hit. We can deliver the cached response,
