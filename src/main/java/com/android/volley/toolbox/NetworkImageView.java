@@ -43,7 +43,8 @@ public class NetworkImageView extends ImageView {
      * Resource ID of the image to be used if the network response fails.
      */
     public int mErrorImageId;
-
+    //标记是否从网络载入,从本地载为false
+    boolean isLoadFromNetwork = true;
     /** Local copy of the ImageLoader. */
     public ImageLoader mImageLoader;
 
@@ -77,6 +78,7 @@ public class NetworkImageView extends ImageView {
     public void setImageUrl(String url, ImageLoader imageLoader) {
         mUrl = url;
         mImageLoader = imageLoader;
+        isLoadFromNetwork = true;
         // The URL has potentially changed. See if we need to load it.
         loadImageIfNecessary(false);
     }
@@ -106,6 +108,9 @@ public class NetworkImageView extends ImageView {
      * @param isInLayoutPass True if this was invoked from a layout pass, false otherwise.
      */
     protected void loadImageIfNecessary(final boolean isInLayoutPass) {
+        if (!isLoadFromNetwork) {
+            return;
+        }
         int width = getWidth();
         int height = getHeight();
         ScaleType scaleType = getScaleType();
@@ -221,5 +226,14 @@ public class NetworkImageView extends ImageView {
     protected void drawableStateChanged() {
         super.drawableStateChanged();
         invalidate();
+    }
+    /**
+     * 从本地加载
+     * @param resId
+     */
+    @Override
+    public void setImageResource(int resId) {
+        super.setImageResource(resId);
+        isLoadFromNetwork = false;
     }
 }
