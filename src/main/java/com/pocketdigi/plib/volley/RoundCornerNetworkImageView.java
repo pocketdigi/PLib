@@ -15,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.pocketdigi.plib.R;
+import com.pocketdigi.plib.core.PApplication;
 import com.pocketdigi.plib.core.PLog;
 import com.pocketdigi.plib.util.ImageUtil;
 
@@ -66,13 +67,13 @@ public class RoundCornerNetworkImageView extends NetworkImageView {
 
     }
 
-    public void setImageUrl(String url, ImageLoader imageLoader,boolean partBlur) {
+    public void setImageUrl(String url,boolean partBlur) {
         if(this.partBlur!=partBlur)
         {
             partBlurChanged=true;
             this.partBlur=partBlur;
         }
-        super.setImageUrl(url, imageLoader);
+        super.setImageUrl(url, PApplication.getInstance().getImageLoader());
     }
 
     @Override
