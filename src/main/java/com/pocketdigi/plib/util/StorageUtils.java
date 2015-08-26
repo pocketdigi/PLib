@@ -14,13 +14,13 @@ import java.io.File;
 public class StorageUtils {
     /**
      * 获取外部存储可用空间大小，如果未挂载，返回0
+     *
      * @return
      */
-    public static long getExternalStorageAvailableSize()
-    {
-        long blockSize=0;
-        long availableBlocks=0;
-        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+    public static long getExternalStorageAvailableSize() {
+        long blockSize = 0;
+        long availableBlocks = 0;
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             try {
                 File path = Environment.getExternalStorageDirectory();
                 StatFs stat = new StatFs(path.getPath());
@@ -39,8 +39,8 @@ public class StorageUtils {
     }
 
     public static long getInternalStorageAvailableSize(Context context) {
-        long blockSize=0;
-        long availableBlocks=0;
+        long blockSize = 0;
+        long availableBlocks = 0;
         try {
             File path = context.getCacheDir();
             StatFs stat = new StatFs(path.getPath());
