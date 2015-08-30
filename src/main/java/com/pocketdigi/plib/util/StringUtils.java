@@ -129,15 +129,15 @@ public class StringUtils {
     }
 
     /**
-     * 校验是否是中国车牌,字母 必须大写
+     * 校验是否是中国车牌,字母 必须大写,不是很严格
      *
      * @param plateNumber
      * @return
      */
     public static boolean isChinesePlateNumber(String plateNumber) {
-        if (TextUtils.isEmpty(plateNumber))
-            return false;
-        Pattern pattern = Pattern.compile("^[\\u4e00-\\u9fa5]{1}[A-Z]{1}[A-Z_0-9]{5}$");
+//        if (TextUtils.isEmpty(plateNumber))
+//            return false;
+        Pattern pattern = Pattern.compile("^[\\u4e00-\\u9fa5]{1}[A-Z]{1}[\\S]{5}$");
         Matcher matcher = pattern.matcher(plateNumber);
         return matcher.find();
     }
