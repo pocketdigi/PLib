@@ -45,6 +45,7 @@ public abstract class PApplication extends Application{
         RequestQueue imageRequestQueue= Volley.newRequestQueue(this);
         imageRequestQueue.start();
         imageLoader=new ImageLoader(imageRequestQueue,new L2LRUImageCache(this));
+
     }
 
     void activityCreate(Activity activity)
@@ -143,4 +144,5 @@ public abstract class PApplication extends Application{
     public ImageLoader getImageLoader() {
         return imageLoader;
     }
+
 }
