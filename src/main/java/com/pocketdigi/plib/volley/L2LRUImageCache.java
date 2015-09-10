@@ -9,6 +9,7 @@ import android.util.LruCache;
 import com.android.volley.toolbox.ImageLoader;
 import com.jakewharton.disklrucache.DiskLruCache;
 import com.pocketdigi.plib.core.PApplication;
+import com.pocketdigi.plib.core.PAsyncTask;
 import com.pocketdigi.plib.core.PLog;
 import com.pocketdigi.plib.util.FileUtils;
 import com.pocketdigi.plib.util.MD5Utils;
@@ -76,10 +77,18 @@ public class L2LRUImageCache implements ImageLoader.ImageCache{
     }
 
     @Override
-    public void putBitmap(String url, Bitmap bitmap) {
-        String key=generateKey(url);
+    public void putBitmap(String url, final Bitmap bitmap) {
+        final String key=generateKey(url);
         lruCache.put(key, bitmap);
-        putBitmapToDiskLruCache(key,bitmap);
+        new PAsyncTask<Void,Void,Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                putBitmapToDiskLruCache(key,bitmap);
+                return null;
+            }
+        }.execute();
+
     }
 
     public void clear() {

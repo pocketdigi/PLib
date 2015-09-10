@@ -9,6 +9,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.pocketdigi.plib.util.DeviceUtils;
+import com.pocketdigi.plib.volley.AsyncImageLoader;
 import com.pocketdigi.plib.volley.L2LRUImageCache;
 
 import de.greenrobot.event.EventBus;
@@ -44,7 +45,7 @@ public abstract class PApplication extends Application{
         instanceState=new Bundle();
         RequestQueue imageRequestQueue= Volley.newRequestQueue(this);
         imageRequestQueue.start();
-        imageLoader=new ImageLoader(imageRequestQueue,new L2LRUImageCache(this));
+        imageLoader=AsyncImageLoader.getDefaultImageLoader();
 
     }
 
