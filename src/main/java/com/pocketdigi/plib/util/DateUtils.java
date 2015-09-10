@@ -78,8 +78,16 @@ public class DateUtils {
         return getStartTimeOfDay(c);
     }
 
+    public static long getStartOfDay(long timestamp)
+    {
+        Calendar c=Calendar.getInstance();
+        c.setTimeInMillis(timestamp);
+        return getStartTimeOfDay(c);
+    }
+
     /**
      * 传入时间是否为今日时间
+     * 此方法使用本地时间判断，可能不准，建议使用isSameDay，传入网络时间
      * @param timestamp
      * @return
      */
@@ -89,6 +97,19 @@ public class DateUtils {
         long delta=timestamp-todayStart;
         return delta>0&&delta<24*60*60*1000;
     }
+
+    /**
+     * 两个时间是否在同一天
+     * @param timestamp
+     * @param timestamp2
+     * @return
+     */
+    public static boolean isSameDay(long timestamp,long timestamp2) {
+        long todayStart=getStartOfDay(timestamp2);
+        long delta=timestamp-todayStart;
+        return delta>0&&delta<24*60*60*1000;
+    }
+
 
     /**
      * 传入时间 是否为明日 时间
