@@ -19,15 +19,24 @@ public class DateUtils {
 	 * @return
 	 */
 	public static Date str2Date(String format, String str) {
-		SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.CHINA);
-		try {
-			return sdf.parse(str);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+		return str2Date(format,str,Locale.CHINA);
 	}
+    /**
+     * 把字符串转换成Date
+     * @param format yyyy-MM-dd
+     * @param str 2012-12-30
+     * @return
+     */
+    public static Date str2Date(String format, String str,Locale locale) {
+        SimpleDateFormat sdf = new SimpleDateFormat(format, locale);
+        try {
+            return sdf.parse(str);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
 	/**
 	 * 把date转换成字符串
 	 * @param format　yyyy-MM-dd HH:mm:ss

@@ -14,6 +14,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * 下载Runnable
@@ -80,7 +81,7 @@ public class DownRunnable implements Runnable {
                 saveFileLastModified = saveFile.lastModified();
                 String remoteLastModified = connection.getHeaderField("Last-Modified");
                 if (!TextUtils.isEmpty(remoteLastModified)) {
-                    Date date = DateUtils.str2Date("EEE, dd MMM yyyy HH:mm:ss zzz", remoteLastModified);
+                    Date date = DateUtils.str2Date("EEE, dd MMM yyyy HH:mm:ss zzz", remoteLastModified, Locale.ENGLISH);
                     if (date != null) {
                         remoteLastModifiedTimestamp = date.getTime();
                     }
@@ -92,27 +93,31 @@ public class DownRunnable implements Runnable {
                     connection.disconnect();
                     return;
                 } else {
+                    PLog.d(this,"文件LastModify不同,重新下载:本地"+saveFileLastModified+"远程："+remoteLastModifiedTimestamp);
                     //文件不一样，删除
                     FileUtils.deleteFile(task.getSavePath());
                 }
             }
 
-            RandomAccessFile tmpFile = new RandomAccessFile(tmpFilePath, "rw");
-            long totalFileSize, downloadedSize = 0;
-            //断点续传 connection.setRequestProperty("RANGE","bytes="+100);tomcat会返回404,暂时去掉
-            if (FileUtils.isFileExist(tmpFilePath)) {
-                totalFileSize = getFullFileSize();
-                long tmpFileSize = new File(tmpFilePath).length();
-                tmpFile.seek(tmpFileSize);
-                connection.setRequestProperty("RANGE", "bytes=" + tmpFileSize + "-");
-                downloadedSize = tmpFileSize;
-                PLog.d(this, "文件已存在，断点续传，从" + tmpFileSize + "开始");
-            } else {
-                totalFileSize = connection.getContentLength();
-            }
 
-//            totalFileSize=connection.getContentLength();
-//            tmpFile.seek(0);
+
+//            RandomAccessFile tmpFile = new RandomAccessFile(tmpFilePath, "rw");
+            long totalFileSize, downloadedSize = 0;
+            //某些服务器不支持断点续传
+//            //断点续传 connection.setRequestProperty("RANGE","bytes="+100);tomcat会返回404,暂时去掉
+//            if (FileUtils.isFileExist(tmpFilePath)) {
+//                totalFileSize = getFullFileSize();
+//                long tmpFileSize = new File(tmpFilePath).length();
+//                tmpFile.seek(tmpFileSize);
+//                connection.setRequestProperty("RANGE", "bytes=" + tmpFileSize + "-");
+//                downloadedSize = tmpFileSize;
+//                PLog.d(this, "文件已存在，断点续传，从" + tmpFileSize + "开始");
+//            } else {
+//                totalFileSize = connection.getContentLength();
+//            }
+
+            totalFileSize=connection.getContentLength();
+            FileOutputStream fos=new FileOutputStream(tmpFilePath);
 
 
             task.setFileSize(totalFileSize);
@@ -124,7 +129,8 @@ public class DownRunnable implements Runnable {
             long speedCount = 0;
             while ((readedLength = inputStream.read(buffer, 0, bufferSize)) > 0 && !task.isCancel()) {
                 downloadedSize += readedLength;
-                tmpFile.write(buffer, 0, readedLength);
+                fos.write(buffer, 0, readedLength);
+//                tmpFile.write(buffer, 0, readedLength);
                 task.setDownloadedSize(downloadedSize);
                 speedCount += readedLength;
                 long t2 = System.currentTimeMillis();
@@ -136,17 +142,17 @@ public class DownRunnable implements Runnable {
                     speedCount = 0;
                 }
             }
-            tmpFile.close();
+            fos.close();
+
             if (task.isCancel()) {
                 PLog.d(this, "下载取消" + task.getId() + " " + task.getUrl());
                 taskCancel();
-                return;
             } else {
                 PLog.d(this,"下载成功,修改lastModified");
                 File tmpDownloadFile=new File(tmpFilePath);
                 tmpDownloadFile.setLastModified(remoteLastModifiedTimestamp);
+                FileUtils.rename(tmpFilePath, task.getSavePath());
                 taskSuccess();
-                return;
             }
 
         } catch (Exception e) {
@@ -181,7 +187,6 @@ public class DownRunnable implements Runnable {
     }
 
     private void taskSuccess() {
-        FileUtils.rename(tmpFilePath, task.getSavePath());
         handler.post(new Runnable() {
             @Override
             public void run() {
