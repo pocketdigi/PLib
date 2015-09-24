@@ -117,6 +117,7 @@ public class DownRunnable implements Runnable {
 //            }
 
             totalFileSize=connection.getContentLength();
+            FileUtils.deleteFile(tmpFilePath);
             FileOutputStream fos=new FileOutputStream(tmpFilePath);
 
 
