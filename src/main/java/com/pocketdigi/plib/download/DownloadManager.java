@@ -33,9 +33,9 @@ public class DownloadManager implements DownloadListener {
     int corePoolSize = 1;
     int maximumPoolSize = 2;
     AtomicInteger atomicInteger = new AtomicInteger();
-    ThreadPoolExecutor executor;
-    HashSet<DownloadListener> listeners;
-    ArrayList<DownTask> taskList;
+    static ThreadPoolExecutor executor;
+    static HashSet<DownloadListener> listeners;
+    static ArrayList<DownTask> taskList;
     public static int CONNECT_TIMEOUT=15000;
     public static int READ_TIMEOUT=25000;
 
@@ -44,7 +44,7 @@ public class DownloadManager implements DownloadListener {
      * 仅在wifi时下载
      */
     public boolean wifiOnly=false;
-    WifiStateReceiver wifiReceiver;
+    static WifiStateReceiver wifiReceiver;
     public static DownloadManager getInstance() {
         if (instance == null)
             instance = new DownloadManager();
@@ -111,8 +111,9 @@ public class DownloadManager implements DownloadListener {
         listeners.remove(listener);
     }
 
-    public void removeAllListener() {
-        listeners.clear();
+    public static void removeAllListener() {
+        if(listeners!=null)
+            listeners.clear();
     }
 
     @Override
@@ -168,9 +169,11 @@ public class DownloadManager implements DownloadListener {
         }
     }
 
-    public void cancelAllTasks() {
-        for (DownTask task : taskList) {
-            task.cancel(false);
+    public static void cancelAllTasks() {
+        if(taskList!=null) {
+            for (DownTask task : taskList) {
+                task.cancel(false);
+            }
         }
     }
 
@@ -185,23 +188,23 @@ public class DownloadManager implements DownloadListener {
                 NetworkInfo info=intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
                 if(info!=null&&info.getDetailedState().equals(NetworkInfo.DetailedState.DISCONNECTED)&&info.getType()== ConnectivityManager.TYPE_WIFI)
                 {
-                    PLog.d(this,"WIFI断开");
+                    PLog.e(this,"WIFI断开");
                     onWifiDisconnect();
                 }
             }
         }
     }
 
-
-    public void destory() {
+    public static void destory() {
         cancelAllTasks();
-        executor.shutdownNow();
-        taskList.clear();
+        if(executor!=null)
+            executor.shutdownNow();
+        if(taskList!=null)
+            taskList.clear();
         removeAllListener();
-        PApplication.getInstance().unregisterReceiver(wifiReceiver);
+        if(wifiReceiver!=null)
+            PApplication.getInstance().unregisterReceiver(wifiReceiver);
         instance = null;
-
-
     }
     /**
      * 是否仅在wifi下下载

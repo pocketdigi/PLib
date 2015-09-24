@@ -72,7 +72,13 @@ public class DownRunnable implements Runnable {
         try {
             URL url = new URL(task.getUrl());
             connection = openConnection(url);
-
+            int responseCode = connection.getResponseCode();
+            if(responseCode!=200) {
+                PLog.e(this,"下载失败,服务器返回"+responseCode);
+                task.setState(DownTask.STATE_FAIL);
+                taskFailure(DownloadListener.ERROR_CODE_IO);
+                return;
+            }
             long saveFileLastModified;
             long remoteLastModifiedTimestamp = 0;
             if (FileUtils.isFileExist(task.getSavePath())) {
@@ -90,7 +96,6 @@ public class DownRunnable implements Runnable {
                 if (remoteLastModifiedTimestamp == saveFileLastModified) {
                     PLog.d(this,"文件LastModify相同,不再下载");
                     taskSuccess();
-                    connection.disconnect();
                     return;
                 } else {
                     PLog.d(this,"文件LastModify不同,重新下载:本地"+saveFileLastModified+"远程："+remoteLastModifiedTimestamp);
