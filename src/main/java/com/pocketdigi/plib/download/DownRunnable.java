@@ -2,15 +2,18 @@ package com.pocketdigi.plib.download;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 
 import com.pocketdigi.plib.core.PApplication;
 import com.pocketdigi.plib.core.PLog;
+import com.pocketdigi.plib.util.DateUtils;
 import com.pocketdigi.plib.util.FileUtils;
 import com.pocketdigi.plib.util.StorageUtils;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 
 /**
  * 下载Runnable
@@ -47,12 +50,12 @@ public class DownRunnable implements Runnable {
             e.printStackTrace();
         }
         taskStart();
-        if(task.getSavePath().startsWith("/data/data")){
+        if (task.getSavePath().startsWith("/data/data")) {
             if (StorageUtils.getInternalStorageAvailableSize(PApplication.getInstance()) < 10 * 1024 * 1024) {
                 taskFailure(DownloadListener.ERROR_CODE_DISK_FULL);
                 return;
             }
-        }else{
+        } else {
             if (StorageUtils.getExternalStorageAvailableSize() < 50 * 1024 * 1024) {
                 taskFailure(DownloadListener.ERROR_CODE_DISK_FULL);
                 return;
@@ -62,31 +65,50 @@ public class DownRunnable implements Runnable {
         PLog.d(this, "下载文件" + task.getUrl());
         PLog.d(this, "保存到" + tmpFilePath);
 
-        if(FileUtils.isFileExist(task.getSavePath()))
-        {
-            //若文件存在，说明已经下载完，这种情况一般在下歌词时出现
-            taskSuccess();
-            return;
-        }
 
         HttpURLConnection connection = null;
         InputStream inputStream = null;
         try {
             URL url = new URL(task.getUrl());
             connection = openConnection(url);
-            RandomAccessFile tmpFile=new RandomAccessFile(tmpFilePath,"rw");
-            long totalFileSize,downloadedSize=0;
+
+            long saveFileLastModified;
+            long remoteLastModifiedTimestamp = 0;
+            if (FileUtils.isFileExist(task.getSavePath())) {
+                //若文件存在，读lastmodify
+                File saveFile = new File(task.getSavePath());
+                saveFileLastModified = saveFile.lastModified();
+                String remoteLastModified = connection.getHeaderField("Last-Modified");
+                if (!TextUtils.isEmpty(remoteLastModified)) {
+                    Date date = DateUtils.str2Date("EEE, dd MMM yyyy HH:mm:ss zzz", remoteLastModified);
+                    if (date != null) {
+                        remoteLastModifiedTimestamp = date.getTime();
+                    }
+                }
+                //如果时间相同，说明文件一样，不用下载
+                if (remoteLastModifiedTimestamp == saveFileLastModified) {
+                    PLog.d(this,"文件LastModify相同,不再下载");
+                    taskSuccess();
+                    connection.disconnect();
+                    return;
+                } else {
+                    //文件不一样，删除
+                    FileUtils.deleteFile(task.getSavePath());
+                }
+            }
+
+            RandomAccessFile tmpFile = new RandomAccessFile(tmpFilePath, "rw");
+            long totalFileSize, downloadedSize = 0;
             //断点续传 connection.setRequestProperty("RANGE","bytes="+100);tomcat会返回404,暂时去掉
-            if(FileUtils.isFileExist(tmpFilePath))
-            {
-                totalFileSize=getFullFileSize();
-                long tmpFileSize=new File(tmpFilePath).length();
+            if (FileUtils.isFileExist(tmpFilePath)) {
+                totalFileSize = getFullFileSize();
+                long tmpFileSize = new File(tmpFilePath).length();
                 tmpFile.seek(tmpFileSize);
-                connection.setRequestProperty("RANGE","bytes="+tmpFileSize+"-");
-                downloadedSize=tmpFileSize;
-                PLog.d(this,"文件已存在，断点续传，从"+tmpFileSize+"开始");
-            }else {
-                totalFileSize=connection.getContentLength();
+                connection.setRequestProperty("RANGE", "bytes=" + tmpFileSize + "-");
+                downloadedSize = tmpFileSize;
+                PLog.d(this, "文件已存在，断点续传，从" + tmpFileSize + "开始");
+            } else {
+                totalFileSize = connection.getContentLength();
             }
 
 //            totalFileSize=connection.getContentLength();
@@ -99,27 +121,30 @@ public class DownRunnable implements Runnable {
             byte[] buffer = new byte[bufferSize];
             int readedLength = 0;
             long t1 = System.currentTimeMillis();
-            long speedCount=0;
+            long speedCount = 0;
             while ((readedLength = inputStream.read(buffer, 0, bufferSize)) > 0 && !task.isCancel()) {
                 downloadedSize += readedLength;
                 tmpFile.write(buffer, 0, readedLength);
                 task.setDownloadedSize(downloadedSize);
-                speedCount+=readedLength;
+                speedCount += readedLength;
                 long t2 = System.currentTimeMillis();
                 //每秒发送一次进度改变事件
                 if (t2 - t1 > 1000) {
                     t1 = t2;
                     taskProgressChanged();
-                    PLog.d(this,"下载速度: "+speedCount/1024+" KB 进度: "+downloadedSize*100/totalFileSize);
-                    speedCount=0;
+                    PLog.d(this, "下载速度: " + speedCount / 1024 + " KB 进度: " + downloadedSize * 100 / totalFileSize);
+                    speedCount = 0;
                 }
             }
             tmpFile.close();
             if (task.isCancel()) {
-                PLog.d(this, "下载取消" +task.getId()+" "+  task.getUrl());
+                PLog.d(this, "下载取消" + task.getId() + " " + task.getUrl());
                 taskCancel();
                 return;
             } else {
+                PLog.d(this,"下载成功,修改lastModified");
+                File tmpDownloadFile=new File(tmpFilePath);
+                tmpDownloadFile.setLastModified(remoteLastModifiedTimestamp);
                 taskSuccess();
                 return;
             }
@@ -145,7 +170,7 @@ public class DownRunnable implements Runnable {
         if (task.isDeleteFile()) {
             FileUtils.deleteFile(tmpFilePath);
         }
-        PLog.d(this, "下载失败" +task.getId()+ task.getUrl() + " 错误代码 " + errorCode);
+        PLog.d(this, "下载失败" + task.getId() + task.getUrl() + " 错误代码 " + errorCode);
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -160,7 +185,7 @@ public class DownRunnable implements Runnable {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                PLog.d(this, "下载成功 " +task.getId()+" "+ task.getUrl());
+                PLog.d(this, "下载成功 " + task.getId() + " " + task.getUrl());
                 task.setState(DownTask.STATE_SUCCESS);
                 listener.onComplete(task);
             }
@@ -189,8 +214,8 @@ public class DownRunnable implements Runnable {
             }
         });
     }
-    private void taskStart()
-    {
+
+    private void taskStart() {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -212,27 +237,26 @@ public class DownRunnable implements Runnable {
         connection.setUseCaches(false);
         connection.setDoInput(true);
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("Referer","http://www.fwvga.com/");
+        connection.setRequestProperty("Referer", "http://www.fwvga.com/");
         return connection;
     }
 
     /**
      * 获取完整的文件大小
+     *
      * @return
      */
-    private long getFullFileSize()
-    {
-        HttpURLConnection connection=null;
+    private long getFullFileSize() {
+        HttpURLConnection connection = null;
         try {
             URL url = new URL(task.getUrl());
             connection = openConnection(url);
             long remoteFileSize = connection.getContentLength();
             return remoteFileSize;
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            if(connection!=null)
+        } finally {
+            if (connection != null)
                 connection.disconnect();
         }
         return 0;
