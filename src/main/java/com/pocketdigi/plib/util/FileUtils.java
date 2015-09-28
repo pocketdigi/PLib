@@ -182,7 +182,7 @@ public class FileUtils {
     }
 
     /**
-     * 复制文件
+     * 复制文件,会自动创建目录
      * @param oldPath
      * @param newPath
      */
@@ -193,7 +193,9 @@ public class FileUtils {
             File oldfile = new File(oldPath);
             if (oldfile.exists()) {
                 InputStream inStream = new FileInputStream(oldPath);
-                FileOutputStream fs = new FileOutputStream(newPath);
+                File newFile=new File(newPath);
+                mkdirs(newFile.getParent());
+                FileOutputStream fs = new FileOutputStream(newFile);
                 byte[] buffer = new byte[1444];
                 int length;
                 while ((byteread = inStream.read(buffer)) != -1) {
