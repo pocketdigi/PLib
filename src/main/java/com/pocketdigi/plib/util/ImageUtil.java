@@ -1,6 +1,7 @@
 package com.pocketdigi.plib.util;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -39,12 +40,12 @@ public class ImageUtil {
     private static final String TAG = "ImageUtil";
 
     /**
-     * Android api 17实现的虚化
+     * Android api 17实现的虚化,低版本会使用stackblur
      * 某些机型上可能会Crash
      *
      * @param context
      * @param sentBitmap
-     * @param radius     大于1小于等于25
+     * @param radius     大于1小于等于25 ,值越大，虚化越严重
      * @return
      */
     @SuppressLint("NewApi")
@@ -966,6 +967,20 @@ public class ImageUtil {
         }
         newbitmap.recycle();
         cbitmap.recycle();
+    }
+
+    /**
+     * 将activity当前视图虚拟，当做背景图片使用(虚化严重)
+     * @param activity
+     * @return
+     */
+    public static Bitmap blurActivityForBg(Activity activity) {
+        //step1 截图
+        Bitmap viewBmp = RuntimeUtil.screenShot(activity);
+        //stpe2 缩放
+        Bitmap scaledBmp = ImageUtil.scaleBitmap(viewBmp, viewBmp.getWidth() / 8, viewBmp.getHeight() / 8);
+        //step3 blur
+        return fastblur(activity, scaledBmp, 25);
     }
 
 

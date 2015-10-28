@@ -7,7 +7,13 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Environment;
+import android.view.Display;
+import android.view.View;
 
 import com.pocketdigi.plib.R;
 import com.pocketdigi.plib.core.PApplication;
@@ -145,5 +151,80 @@ public class RuntimeUtil {
         }
     }
 
+    /**
+     * 获取App可写目录,优先外部存储/sdcard/Android/data/packagename/files
+     * 如果没有，返回/data/data/packagename/files
+     * @param context
+     * @return
+     */
+    public static String getContextFilesDir(Context context) {
+        String filesDir;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            try {
+                filesDir = context.getExternalFilesDir(null).getPath();
+            }catch (Exception e) {
+                filesDir = context.getFilesDir().getPath();
+            }
+        } else {
+            filesDir = context.getFilesDir().getPath();
+        }
+        return filesDir;
+    }
+
+    /**
+     * 获取 app的cache dir，默认/sdcard/Android/data/packagename/cache
+     * @param context /data/data/packagename/cache
+     * @return
+     */
+    public static String getContextCacheDir(Context context) {
+        String filesDir;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable()) {
+            try {
+                filesDir = context.getExternalCacheDir().getPath();
+            }catch (Exception e) {
+                filesDir = context.getCacheDir().getPath();
+            }
+        } else {
+            filesDir = context.getCacheDir().getPath();
+        }
+        return filesDir;
+    }
+
+    /**
+     * 截取Activity图片
+     * @param activity
+     * @return
+     */
+    public static Bitmap screenShot(Activity activity) {
+        // 获取windows中最顶层的view
+        View view = activity.getWindow().getDecorView();
+        view.buildDrawingCache();
+
+        // 获取状态栏高度
+        Rect rect = new Rect();
+        view.getWindowVisibleDisplayFrame(rect);
+        int statusBarHeights = rect.top;
+        Display display = activity.getWindowManager().getDefaultDisplay();
+
+        // 获取屏幕宽和高
+        Point point=new Point();
+        display.getSize(point);
+        int widths = point.x;
+        int heights = point.y;
+
+        // 允许当前窗口保存缓存信息
+        view.setDrawingCacheEnabled(true);
+
+        // 去掉状态栏
+        Bitmap bmp = Bitmap.createBitmap(view.getDrawingCache(), 0,
+                statusBarHeights, widths, heights - statusBarHeights);
+
+        // 销毁缓存信息
+        view.destroyDrawingCache();
+
+        return bmp;
+    }
 
 }
