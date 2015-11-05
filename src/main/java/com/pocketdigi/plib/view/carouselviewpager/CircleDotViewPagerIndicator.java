@@ -1,4 +1,4 @@
-package com.pocketdigi.plib.view;
+package com.pocketdigi.plib.view.carouselviewpager;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
@@ -13,15 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ViewPager指示器 选中为白点，未选中为空心
+ * 圆点ViewPager指示器 选中为白点，未选中为空心
  * Created by fhp on 15/3/3.
  */
-public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPageChangeListener{
+public class CircleDotViewPagerIndicator extends LinearLayout implements IPagerIndicator{
     int checkedDrawableId, unCheckedDrawableId;
     int spacing;
     int iconSize=LayoutParams.WRAP_CONTENT;
     List<ViewPager.OnPageChangeListener> pageChangeListeners;
-    public ViewPagerIndicator(Context context, AttributeSet attrs) {
+    public CircleDotViewPagerIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
         checkedDrawableId =R.drawable.plib_ic_indicator_current;
         unCheckedDrawableId =R.drawable.plib_ic_indicator_notcurrent;
@@ -79,7 +79,6 @@ public class ViewPagerIndicator extends LinearLayout implements ViewPager.OnPage
 
     @Override
     public void onPageSelected(int position) {
-
         int childCount=getChildCount();
         if(childCount>0) {
             int realPosition = position % childCount;
