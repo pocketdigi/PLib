@@ -72,6 +72,7 @@ public abstract class PFragment extends Fragment implements OnBackPressedListene
     @Override
     public void onResume() {
         super.onResume();
+        PLog.d(this, "onResume");
         registerListenerOrReceiver();
     }
 

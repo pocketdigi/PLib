@@ -19,7 +19,7 @@ public class DiskLruCacheHelper {
     private DiskLruCache diskLruCache;
     public DiskLruCacheHelper() {
         try {
-            diskLruCache=DiskLruCache.open(PApplication.getInstance().getCacheDir(),RuntimeUtil.getCurrentVersionCode(),1000,10*1024*1024);
+            diskLruCache=DiskLruCache.open(PApplication.getInstance().getCacheDir(),RuntimeUtil.getCurrentVersionCode(),1,30*1024*1024);
         } catch (IOException e) {
             e.printStackTrace();
         }
