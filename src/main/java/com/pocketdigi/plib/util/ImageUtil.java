@@ -6,21 +6,13 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
-import android.support.annotation.DrawableRes;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 
@@ -976,11 +968,11 @@ public class ImageUtil {
      */
     public static Bitmap blurActivityForBg(Activity activity) {
         //step1 截图
-        Bitmap viewBmp = RuntimeUtil.screenShot(activity);
+        Bitmap viewBmp = RuntimeUtil.screenShotNoStatusBar(activity);
         //stpe2 缩放
-        Bitmap scaledBmp = ImageUtil.scaleBitmap(viewBmp, viewBmp.getWidth() / 8, viewBmp.getHeight() / 8);
+        Bitmap scaledBmp = ImageUtil.scaleBitmap(viewBmp, viewBmp.getWidth() / 4, viewBmp.getHeight() / 4);
         //step3 blur
-        return fastblur(activity, scaledBmp, 25);
+        return fastblur(activity, scaledBmp, 15);
     }
 
 

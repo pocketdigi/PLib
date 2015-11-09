@@ -45,7 +45,7 @@ public class RuntimeUtil {
 
         long lastRunTime = manager.getLong(PREKEY_LASTRUNTIME, 0);
         isTodayFirstRun = !DateUtils.isToday(lastRunTime);
-        manager.putLong(PREKEY_LASTRUNTIME,System.currentTimeMillis()).commit();
+        manager.putLong(PREKEY_LASTRUNTIME, System.currentTimeMillis()).commit();
     }
 
     /**
@@ -121,22 +121,23 @@ public class RuntimeUtil {
 
     /**
      * 为程序创建桌面快捷方式
+     *
      * @param mainActivity 主Activity
      */
-    public static void addShortcut(Activity mainActivity,String appName,int iconResId){
+    public static void addShortcut(Activity mainActivity, String appName, int iconResId) {
         boolean isInstallShortcut = false;
         final ContentResolver cr = mainActivity.getContentResolver();
-        final String AUTHORITY ="com.android.launcher.settings";
-        final Uri CONTENT_URI = Uri.parse("content://" +AUTHORITY + "/favorites?notify=true");
-        Cursor c = cr.query(CONTENT_URI,new String[] {"title","iconResource" },"title=?",
-                new String[] {appName.trim()}, null);
-        if(c!=null && c.getCount()>0){
-            isInstallShortcut = true ;
+        final String AUTHORITY = "com.android.launcher.settings";
+        final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/favorites?notify=true");
+        Cursor c = cr.query(CONTENT_URI, new String[]{"title", "iconResource"}, "title=?",
+                new String[]{appName.trim()}, null);
+        if (c != null && c.getCount() > 0) {
+            isInstallShortcut = true;
         }
         if (c != null) {
             c.close();
         }
-        if(!isInstallShortcut) {
+        if (!isInstallShortcut) {
             Intent shortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
             //快捷方式的名称
             shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
@@ -154,6 +155,7 @@ public class RuntimeUtil {
     /**
      * 获取App可写目录,优先外部存储/sdcard/Android/data/packagename/files
      * 如果没有，返回/data/data/packagename/files
+     *
      * @param context
      * @return
      */
@@ -163,7 +165,7 @@ public class RuntimeUtil {
                 || !Environment.isExternalStorageRemovable()) {
             try {
                 filesDir = context.getExternalFilesDir(null).getPath();
-            }catch (Exception e) {
+            } catch (Exception e) {
                 filesDir = context.getFilesDir().getPath();
             }
         } else {
@@ -174,6 +176,7 @@ public class RuntimeUtil {
 
     /**
      * 获取 app的cache dir，默认/sdcard/Android/data/packagename/cache
+     *
      * @param context /data/data/packagename/cache
      * @return
      */
@@ -183,7 +186,7 @@ public class RuntimeUtil {
                 || !Environment.isExternalStorageRemovable()) {
             try {
                 filesDir = context.getExternalCacheDir().getPath();
-            }catch (Exception e) {
+            } catch (Exception e) {
                 filesDir = context.getCacheDir().getPath();
             }
         } else {
@@ -194,10 +197,11 @@ public class RuntimeUtil {
 
     /**
      * 截取Activity图片
+     *
      * @param activity
      * @return
      */
-    public static Bitmap screenShot(Activity activity) {
+    public static Bitmap screenShotNoStatusBar(Activity activity) {
         // 获取windows中最顶层的view
         View view = activity.getWindow().getDecorView();
         view.buildDrawingCache();
@@ -209,7 +213,7 @@ public class RuntimeUtil {
         Display display = activity.getWindowManager().getDefaultDisplay();
 
         // 获取屏幕宽和高
-        Point point=new Point();
+        Point point = new Point();
         display.getSize(point);
         int widths = point.x;
         int heights = point.y;
@@ -226,5 +230,26 @@ public class RuntimeUtil {
 
         return bmp;
     }
+
+    /**
+     *截屏，包括状态栏
+     * @param activity
+     * @return
+     */
+    public static Bitmap screenShot(Activity activity) {
+        // 获取windows中最顶层的view
+        View view = activity.getWindow().getDecorView();
+        view.buildDrawingCache();
+        int[] screenSize = DeviceUtils.getScreenSize();
+        // 允许当前窗口保存缓存信息
+        view.setDrawingCacheEnabled(true);
+        // 去掉状态栏
+        Bitmap bmp = Bitmap.createBitmap(view.getDrawingCache(), 0,
+                0, screenSize[0], screenSize[1] );
+        // 销毁缓存信息
+        view.destroyDrawingCache();
+        return bmp;
+    }
+
 
 }
