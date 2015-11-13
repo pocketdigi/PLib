@@ -59,8 +59,11 @@ public class RoundCornerNetworkImageView extends NetworkImageView {
                 bm= ImageUtil.blurBitmapPart(bm, (int)(bm.getHeight()*0.6));
             }
             PLog.d(this,"开始切圆角");
-            RoundedBitmapDrawable roundedBitmapDrawable = ImageUtil.toRoundDrawable(getResources(), bm,radius);
+            //必须 先缩放，否则 有bug
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(bm, getWidth(), getHeight(), true);
+            RoundedBitmapDrawable roundedBitmapDrawable = ImageUtil.toRoundDrawable(getResources(), scaledBitmap,radius);
             PLog.d(this,"结束切圆角");
+//            super.setImageBitmap(roundedBitmapDrawable.getBitmap());
             setImageDrawable(roundedBitmapDrawable);
         }
         loadFinish=true;

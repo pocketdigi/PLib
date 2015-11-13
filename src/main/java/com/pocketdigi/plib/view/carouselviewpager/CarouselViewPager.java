@@ -23,7 +23,7 @@ public class CarouselViewPager extends ViewPager {
     IPagerIndicator pagerIndicator;
     OnPageChangeListener onPageChangeListener;
     CarouselHandler carouselHandler;
-
+    int realPosition=-1;
     public CarouselViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
@@ -52,7 +52,7 @@ public class CarouselViewPager extends ViewPager {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (realCount == 0)
                     return;
-                int realPosition = position % realCount;
+                realPosition = position % realCount;
                 if (pagerIndicator != null)
                     pagerIndicator.onPageScrolled(realPosition, positionOffset, positionOffsetPixels);
                 if (onPageChangeListener != null)
@@ -200,4 +200,5 @@ public class CarouselViewPager extends ViewPager {
 //            }
 //        }
     }
+
 }

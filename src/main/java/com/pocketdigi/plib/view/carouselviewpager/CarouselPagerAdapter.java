@@ -1,5 +1,6 @@
 package com.pocketdigi.plib.view.carouselviewpager;
 
+import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
@@ -22,7 +23,7 @@ import java.util.List;
 public class CarouselPagerAdapter extends PagerAdapter {
     private SparseArray<NetworkImageView> viewSparseArray;
     List<IButtonData> data;
-
+    int realCount=0;
     public CarouselPagerAdapter() {
         this.viewSparseArray = new SparseArray<>();
         this.data = new ArrayList<>();
@@ -61,7 +62,15 @@ public class CarouselPagerAdapter extends PagerAdapter {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PApplication.getInstance().postEvent(new CarouselItemClickEvent(realPosition,buttonData));
+                    int dataPosition=realPosition;
+                    if(realCount==1) {
+                        //如果真实条数少于3条，是自动填充到3条的，
+                        dataPosition=0;
+                    }
+                    if(realCount==2) {
+                        dataPosition=(realPosition==2)?0:realPosition;
+                    }
+                    PApplication.getInstance().postEvent(new CarouselItemClickEvent(dataPosition,buttonData));
                 }
             });
             viewSparseArray.put(realPosition, imageView);
@@ -73,6 +82,8 @@ public class CarouselPagerAdapter extends PagerAdapter {
             ViewGroup parent = (ViewGroup) vp;
             parent.removeView(imageView);
         }
+
+
         container.addView(imageView);
         return imageView;
     }
@@ -90,6 +101,7 @@ public class CarouselPagerAdapter extends PagerAdapter {
     @Override
     public void notifyDataSetChanged() {
         int size = data.size();
+        realCount=size;
         if (size > 0&&size<3) {
             IButtonData firstData = data.get(0);
             for (int i = 0; i < 3 - size; i++) {
