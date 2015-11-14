@@ -107,7 +107,7 @@ public class DownloadManager implements DownloadListener {
      *
      * @param listener
      */
-    public void removeListener(DownloadListener listener) {
+    public  void removeListener(DownloadListener listener) {
         listeners.remove(listener);
     }
 
@@ -142,8 +142,10 @@ public class DownloadManager implements DownloadListener {
     public void onComplete(DownTask task) {
         taskList.remove(task);
         isFirstFailure = false;
-        for (DownloadListener listener : listeners) {
-            listener.onComplete(task);
+        synchronized (this) {
+            for (DownloadListener listener : listeners) {
+                listener.onComplete(task);
+            }
         }
     }
 

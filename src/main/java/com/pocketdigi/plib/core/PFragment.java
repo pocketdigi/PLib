@@ -83,7 +83,9 @@ public abstract class PFragment extends Fragment implements OnBackPressedListene
     }
 
     /**
-     * 注册监听器以及接收器(包括Event),在Fragment被隐藏或销毁时，会调用unregisterListerOrReceiver
+     * 注册监听器以及接收器(包括Event),在Fragment被隐藏时，会调用unregisterListerOrReceiver
+     * 所以，如果需要在其他页面通知当前页面修改，监听器不应该在这里注册，
+     * 应该放到onViewCreated，onDestroyView
      */
     protected void registerListenerOrReceiver() {
         FragmentActivity activity = getActivity();
