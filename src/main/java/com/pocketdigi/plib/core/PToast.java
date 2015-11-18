@@ -3,6 +3,7 @@ package com.pocketdigi.plib.core;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.StringRes;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 /**
@@ -28,16 +29,17 @@ public class PToast {
     }
     public static void show(final String message)
     {
-        if(!isMainThread())
-        {
-            new Handler(Looper.myLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(PApplication.getInstance(),message,Toast.LENGTH_SHORT).show();
-                }
-            });
-        }else{
-            Toast.makeText(PApplication.getInstance(),message,Toast.LENGTH_SHORT).show();
+        if(!TextUtils.isEmpty(message)) {
+            if (!isMainThread()) {
+                new Handler(Looper.myLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(PApplication.getInstance(), message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(PApplication.getInstance(), message, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

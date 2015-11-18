@@ -181,13 +181,17 @@ public class RuntimeUtil {
      * @return
      */
     public static String getContextCacheDir(Context context) {
-        String filesDir;
+        String filesDir=null;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || !Environment.isExternalStorageRemovable()) {
             try {
                 filesDir = context.getExternalCacheDir().getPath();
             } catch (Exception e) {
-                filesDir = context.getCacheDir().getPath();
+                try {
+                    filesDir = context.getCacheDir().getPath();
+                }catch (Exception e1) {
+                    e1.printStackTrace();
+                }
             }
         } else {
             filesDir = context.getCacheDir().getPath();
