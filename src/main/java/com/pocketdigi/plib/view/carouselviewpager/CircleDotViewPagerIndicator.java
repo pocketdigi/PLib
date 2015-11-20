@@ -23,11 +23,21 @@ public class CircleDotViewPagerIndicator extends LinearLayout implements IPagerI
     List<ViewPager.OnPageChangeListener> pageChangeListeners;
     public CircleDotViewPagerIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
+    }
+
+    public CircleDotViewPagerIndicator(Context context) {
+        super(context);
+        init();
+    }
+
+    private void init() {
         checkedDrawableId =R.drawable.plib_ic_indicator_current;
         unCheckedDrawableId =R.drawable.plib_ic_indicator_notcurrent;
         setOrientation(LinearLayout.HORIZONTAL);
         pageChangeListeners=new ArrayList<>();
     }
+
     public void setIconSize(int pixelSize) {
         iconSize=pixelSize;
     }

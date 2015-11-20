@@ -13,7 +13,7 @@ import com.pocketdigi.plib.core.PLog;
 public class CarouselHandler extends Handler{
     ViewPager viewPager;
     boolean isRunning;
-    long delay=2000;
+    long delay=7000;
     public CarouselHandler(ViewPager viewPager) {
         super(Looper.getMainLooper());
         this.viewPager=viewPager;
