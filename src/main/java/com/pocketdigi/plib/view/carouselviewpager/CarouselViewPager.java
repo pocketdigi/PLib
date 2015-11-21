@@ -126,7 +126,7 @@ public class CarouselViewPager extends ViewPager {
             pagerIndicator.setPageCount(realCount);
             pagerIndicator.onPageSelected(0);
         }
-        setCurrentItem(10 * realCount);
+        setCurrentItem(10 * realCount,false);
 
     }
 
