@@ -10,10 +10,12 @@ import com.pocketdigi.plib.view.IButtonData;
 public class CarouselItemClickEvent extends PEvent {
     IButtonData data;
     int position;
+    CarouselPagerAdapter pagerAdapter;
 
-    public CarouselItemClickEvent(int position,IButtonData data) {
+    public CarouselItemClickEvent(int position, IButtonData data, CarouselPagerAdapter pagerAdapter) {
         this.data = data;
-        this.position=position;
+        this.position = position;
+        this.pagerAdapter = pagerAdapter;
     }
 
     public IButtonData getData() {
@@ -22,5 +24,9 @@ public class CarouselItemClickEvent extends PEvent {
 
     public int getPosition() {
         return position;
+    }
+
+    public CarouselPagerAdapter getPagerAdapter() {
+        return pagerAdapter;
     }
 }

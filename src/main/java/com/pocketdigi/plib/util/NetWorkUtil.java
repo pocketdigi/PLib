@@ -15,7 +15,7 @@ public class NetWorkUtil {
         ConnectivityManager connectMgr = (ConnectivityManager) PApplication.getInstance()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = connectMgr.getActiveNetworkInfo();
-        return info.isConnected();
+        return info != null && info.isConnected();
     }
     /**
      * 判断当前是否WIFI连接，如果没有连接或者非WIFI,返回false

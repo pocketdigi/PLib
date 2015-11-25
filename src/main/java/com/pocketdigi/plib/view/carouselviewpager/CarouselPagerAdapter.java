@@ -23,7 +23,8 @@ import java.util.List;
 public class CarouselPagerAdapter extends PagerAdapter {
     private SparseArray<NetworkImageView> viewSparseArray;
     List<IButtonData> data;
-    int realCount=0;
+    int realCount = 0;
+
     public CarouselPagerAdapter() {
         this.viewSparseArray = new SparseArray<>();
         this.data = new ArrayList<>();
@@ -33,7 +34,8 @@ public class CarouselPagerAdapter extends PagerAdapter {
     public int getCount() {
         //设置一个很大的值，使用户看不到边界
         //数值越大，越容易anr,绝对 不能用Integer.MAX_VALUE
-        return data.size() == 0 ? 0 : 1000;
+
+        return realCount==1?1:data.size() == 0 ? 0 : 1000;
     }
 
     @Override
@@ -50,7 +52,7 @@ public class CarouselPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         //对ViewPager页号求模取出View列表中要显示的项
-        final int realPosition= position%data.size();
+        final int realPosition = position % data.size();
         NetworkImageView imageView = viewSparseArray.get(realPosition);
         final IButtonData buttonData = data.get(realPosition);
         if (imageView == null) {
@@ -62,15 +64,15 @@ public class CarouselPagerAdapter extends PagerAdapter {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int dataPosition=realPosition;
-                    if(realCount==1) {
+                    int dataPosition = realPosition;
+                    if (realCount == 1) {
                         //如果真实条数少于3条，是自动填充到3条的，
-                        dataPosition=0;
+                        dataPosition = 0;
                     }
-                    if(realCount==2) {
-                        dataPosition=(realPosition==2)?0:realPosition;
+                    if (realCount == 2) {
+                        dataPosition = (realPosition == 2) ? 0 : realPosition;
                     }
-                    PApplication.getInstance().postEvent(new CarouselItemClickEvent(dataPosition,buttonData));
+                    PApplication.getInstance().postEvent(new CarouselItemClickEvent(dataPosition, buttonData,CarouselPagerAdapter.this));
                 }
             });
             viewSparseArray.put(realPosition, imageView);
@@ -88,7 +90,7 @@ public class CarouselPagerAdapter extends PagerAdapter {
         return imageView;
     }
 
-    public void setData(List<? extends IButtonData> banners){
+    public void setData(List<? extends IButtonData> banners) {
         this.data.clear();
         this.data.addAll(banners);
         notifyDataSetChanged();
@@ -101,12 +103,10 @@ public class CarouselPagerAdapter extends PagerAdapter {
     @Override
     public void notifyDataSetChanged() {
         int size = data.size();
-        realCount=size;
-        if (size > 0&&size<3) {
+        realCount = size;
+        if (size == 2) {
             IButtonData firstData = data.get(0);
-            for (int i = 0; i < 3 - size; i++) {
-                data.add(firstData);
-            }
+            data.add(firstData);
         }
         viewSparseArray.clear();
         super.notifyDataSetChanged();

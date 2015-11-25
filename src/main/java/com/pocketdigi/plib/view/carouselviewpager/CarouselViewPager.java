@@ -126,8 +126,9 @@ public class CarouselViewPager extends ViewPager {
             pagerIndicator.setPageCount(realCount);
             pagerIndicator.onPageSelected(0);
         }
+        //一条记录隐藏
+        ((View)pagerIndicator).setVisibility(realCount<=1?GONE:VISIBLE);
         setCurrentItem(10 * realCount,false);
-
     }
 
     public void stopCarousel() {
