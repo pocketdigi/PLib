@@ -24,7 +24,7 @@ public class CarouselPagerAdapter extends PagerAdapter {
     private SparseArray<NetworkImageView> viewSparseArray;
     List<IButtonData> data;
     int realCount = 0;
-
+    ImageView.ScaleType scaleType=ImageView.ScaleType.FIT_XY;
     public CarouselPagerAdapter() {
         this.viewSparseArray = new SparseArray<>();
         this.data = new ArrayList<>();
@@ -60,7 +60,7 @@ public class CarouselPagerAdapter extends PagerAdapter {
             imageView.setImageUrl(buttonData.getImageUrl());
             ViewPager.LayoutParams params = new ViewPager.LayoutParams();
             imageView.setLayoutParams(params);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            imageView.setScaleType(scaleType);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -94,6 +94,10 @@ public class CarouselPagerAdapter extends PagerAdapter {
         this.data.clear();
         this.data.addAll(banners);
         notifyDataSetChanged();
+    }
+
+    public void setScaleType(ImageView.ScaleType scaleType) {
+        this.scaleType = scaleType;
     }
 
     /**
