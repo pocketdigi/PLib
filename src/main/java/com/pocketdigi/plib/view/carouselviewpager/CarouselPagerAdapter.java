@@ -44,6 +44,11 @@ public class CarouselPagerAdapter extends PagerAdapter {
     }
 
     @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
+    @Override
     public void destroyItem(ViewGroup container, int position,
                             Object object) {
         //Warning：不要在这里调用removeView
@@ -57,7 +62,6 @@ public class CarouselPagerAdapter extends PagerAdapter {
         final IButtonData buttonData = data.get(realPosition);
         if (imageView == null) {
             imageView = new NetworkImageView(container.getContext());
-            imageView.setImageUrl(buttonData.getImageUrl());
             ViewPager.LayoutParams params = new ViewPager.LayoutParams();
             imageView.setLayoutParams(params);
             imageView.setScaleType(scaleType);
@@ -77,14 +81,13 @@ public class CarouselPagerAdapter extends PagerAdapter {
             });
             viewSparseArray.put(realPosition, imageView);
         }
-
+        imageView.setImageUrl(buttonData.getImageUrl());
         //如果View已经在之前添加到了一个父组件，则必须先remove，否则会抛出IllegalStateException。
         ViewParent vp = imageView.getParent();
         if (vp != null) {
             ViewGroup parent = (ViewGroup) vp;
             parent.removeView(imageView);
         }
-
 
         container.addView(imageView);
         return imageView;
@@ -101,7 +104,8 @@ public class CarouselPagerAdapter extends PagerAdapter {
     }
 
     /**
-     * 数据改变调用(如果数据少于三条，为了效果会加到3条)
+     * 数据改变调用，如果数据只有两条，为了效果会加到4条
+     * 三条就可以，但如果将第1条复制为第3条，循环滚动时会，3后面就是1，就是发现两张一样的图连着滚
      * 该方法会清除所有view,重新生成，没事别调
      */
     @Override
@@ -109,8 +113,8 @@ public class CarouselPagerAdapter extends PagerAdapter {
         int size = data.size();
         realCount = size;
         if (size == 2) {
-            IButtonData firstData = data.get(0);
-            data.add(firstData);
+            data.add(data.get(0));
+            data.add(data.get(1));
         }
         viewSparseArray.clear();
         super.notifyDataSetChanged();

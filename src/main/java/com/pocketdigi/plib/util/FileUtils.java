@@ -145,6 +145,21 @@ public class FileUtils {
     }
 
     /**
+     * 清空指定目录下所有文件,但不删除目录本身
+     *
+     * @param dirPath
+     */
+    public static void clearDirector(String dirPath) {
+        File dirFile = new File(dirPath);
+        if (dirFile.isDirectory()) {
+            File[] files = dirFile.listFiles();
+            for (File file1 : files) {
+                deleteFile(file1.getAbsolutePath());
+            }
+        }
+    }
+
+    /**
      * 获取目录占用空间
      *
      * @param dirPath
@@ -183,6 +198,7 @@ public class FileUtils {
 
     /**
      * 复制文件,会自动创建目录
+     *
      * @param oldPath
      * @param newPath
      */
@@ -193,7 +209,7 @@ public class FileUtils {
             File oldfile = new File(oldPath);
             if (oldfile.exists()) {
                 InputStream inStream = new FileInputStream(oldPath);
-                File newFile=new File(newPath);
+                File newFile = new File(newPath);
                 mkdirs(newFile.getParent());
                 FileOutputStream fs = new FileOutputStream(newFile);
                 byte[] buffer = new byte[1444];
