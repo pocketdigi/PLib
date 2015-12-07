@@ -12,6 +12,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -37,6 +38,7 @@ import com.pocketdigi.plib.core.PLog;
 
 /**
  * 上传管理
+ * 待优化，新版本sdk不支持
  * 添加上传任务：addTask
  * 删除上传任务 UploadTask.setCancel
  */
@@ -150,7 +152,7 @@ public class UploadManager {
                 }
 
                 uploadProgress.setFileSize(multipartEntity.getContentLength());
-				httpPost.setEntity(multipartEntity);
+				httpPost.setEntity((HttpEntity) multipartEntity);
 
 				HttpResponse response;
 				String content;
