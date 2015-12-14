@@ -87,7 +87,7 @@
     <orderEntry type="library" exported="" name="DiskLruCache-2.0.2" level="project" />
     <orderEntry type="library" exported="" name="ormlite-android-4.48" level="project" />
     <orderEntry type="library" exported="" name="ormlite-core-4.48" level="project" />
-    <orderEntry type="library" exported="" name="androidannotations-api-3.2" level="project" />
+    <orderEntry type="library" exported="" name="androidannotations-api-3.3.2" level="project" />
     <orderEntry type="library" exported="" name="EventBus-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.1.1" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3" level="project" />
