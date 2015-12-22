@@ -188,7 +188,7 @@ public class NetworkImageView extends ImageView {
                             setImageResource(mDefaultImageId);
                         }
                     }
-                }, maxWidth, maxHeight, scaleType);
+                }, maxWidth, maxHeight);
 
         // update the ImageContainer to be the new bitmap container.
         mImageContainer = newContainer;

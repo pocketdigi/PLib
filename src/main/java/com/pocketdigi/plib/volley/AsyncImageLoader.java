@@ -14,6 +14,7 @@ import com.android.volley.toolbox.Volley;
 import com.pocketdigi.plib.core.PApplication;
 import com.pocketdigi.plib.core.PLog;
 import com.pocketdigi.plib.util.ImageUtil;
+import com.pocketdigi.plib.util.MD5Utils;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -29,7 +30,7 @@ public class AsyncImageLoader extends ImageLoader{
     /**
      * 在取的请求，可能没取到
      */
-    ConcurrentHashMap<String, ReadImageRequest> readImageRequestConcurrentHashMap = new ConcurrentHashMap<>();
+    private static ConcurrentHashMap<String, ReadImageRequest> readImageRequestConcurrentHashMap = new ConcurrentHashMap<>();
     // 读数据线程池，限制两个线程
     private ExecutorService readExecutorService = new ThreadPoolExecutor(0, 2, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
     //UI线程的Handler
@@ -59,8 +60,9 @@ public class AsyncImageLoader extends ImageLoader{
     /**
      * 销毁，停止所有未处理请求
      */
-    public void destory()
+    public static void destory()
     {
+        readImageRequestConcurrentHashMap.clear();
         requestQueue.stop();
         instance=null;
     }
@@ -101,8 +103,9 @@ public class AsyncImageLoader extends ImageLoader{
      * @return
      */
     private static String getCacheKey(String url, int maxWidth, int maxHeight) {
-        return new StringBuilder(url.length() + 12).append("#W").append(maxWidth).append("#H").append(maxHeight)
-                .append(url).toString();
+        return MD5Utils.getMD516(url);
+//        return new StringBuilder(url.length() + 12).append("#W").append(maxWidth).append("#H").append(maxHeight)
+//                .append(url).toString();
     }
 
     /**

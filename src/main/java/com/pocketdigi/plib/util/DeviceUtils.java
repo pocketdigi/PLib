@@ -41,7 +41,8 @@ public class DeviceUtils {
         int[] size = new int[2];
         size[0] = (int)(0.5F + (float)displayMetrics.widthPixels / displayMetrics.density);
         size[1] =(int)(0.5F + (float)displayMetrics.heightPixels / displayMetrics.density);
-        PLog.e("Screen","Width:"+size[0]+"dp "+"Height:"+size[1]+"dp");
+        PLog.e("Screen","Width:"+size[0]+"dp "+"Height:"+size[1]+"dp DPI:"+displayMetrics.densityDpi);
+
         return size;
     }
 
