@@ -32,7 +32,7 @@ public class AsyncImageLoader extends ImageLoader{
      */
     private static ConcurrentHashMap<String, ReadImageRequest> readImageRequestConcurrentHashMap = new ConcurrentHashMap<>();
     // 读数据线程池，限制两个线程
-    private ExecutorService readExecutorService = new ThreadPoolExecutor(0, 2, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+    private ExecutorService readExecutorService = new ThreadPoolExecutor(0, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
     //UI线程的Handler
     Handler mainHandler;
     private static AsyncImageLoader instance;

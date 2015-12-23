@@ -124,9 +124,10 @@ public class NetworkImageView extends ImageView {
         // if the view's bounds aren't known yet, and this is not a wrap-content/wrap-content
         // view, hold off on loading the image.
         boolean isFullyWrapContent = wrapWidth && wrapHeight;
-        if (width == 0 && height == 0 && !isFullyWrapContent) {
-            return;
-        }
+//        if (width == 0 && height == 0 && !isFullyWrapContent) {
+//
+//            return;
+//        }
 
         // if the URL to be loaded in this view is empty, cancel any old requests and clear the
         // currently loaded image.
