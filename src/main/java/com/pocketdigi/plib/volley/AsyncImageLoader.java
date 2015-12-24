@@ -63,7 +63,8 @@ public class AsyncImageLoader extends ImageLoader{
     public static void destory()
     {
         readImageRequestConcurrentHashMap.clear();
-        requestQueue.stop();
+        if(requestQueue!=null)
+            requestQueue.stop();
         requestQueue=null;
         instance=null;
     }
