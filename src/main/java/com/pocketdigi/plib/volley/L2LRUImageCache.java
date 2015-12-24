@@ -26,8 +26,8 @@ import java.io.OutputStream;
 public class L2LRUImageCache implements ImageLoader.ImageCache{
     LruCache<String, Bitmap> lruCache;
     DiskLruCache diskLruCache;
-    final int RAM_CACHE_SIZE = 10 * 1024 * 1024;
-    String DISK_CACHE_DIR = "cache";
+    final int RAM_CACHE_SIZE = 20 * 1024 * 1024;
+    String DISK_CACHE_DIR = "bmpcache";
     //硬盘缓存50M
     final long DISK_MAX_SIZE = 50 * 1024 * 1024;
     String cacheFullPath;

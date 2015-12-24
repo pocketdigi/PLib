@@ -25,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader.ImageContainer;
 import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.pocketdigi.plib.core.PApplication;
+import com.pocketdigi.plib.volley.AsyncImageLoader;
 
 /**
  * Handles fetching an image from a URL as well as the life-cycle of the
@@ -84,7 +85,7 @@ public class NetworkImageView extends ImageView {
     }
 
     public void setImageUrl(String url) {
-        setImageUrl(url, PApplication.getInstance().getImageLoader());
+        setImageUrl(url, AsyncImageLoader.getDefaultImageLoader());
     }
 
     /**

@@ -76,7 +76,7 @@ public class RoundCornerNetworkImageView extends NetworkImageView {
             partBlurChanged=true;
             this.partBlur=partBlur;
         }
-        super.setImageUrl(url, PApplication.getInstance().getImageLoader());
+        super.setImageUrl(url, AsyncImageLoader.getDefaultImageLoader());
     }
 
     @Override

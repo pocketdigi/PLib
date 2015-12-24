@@ -29,7 +29,6 @@ public abstract class PApplication extends Application{
      * 在隐藏后台时保存参数
      */
     Bundle instanceState;
-    ImageLoader imageLoader;
     public static PApplication getInstance()
     {
         return instance;
@@ -45,7 +44,6 @@ public abstract class PApplication extends Application{
         instanceState=new Bundle();
         RequestQueue imageRequestQueue= Volley.newRequestQueue(this);
         imageRequestQueue.start();
-        imageLoader=AsyncImageLoader.getDefaultImageLoader();
 
     }
 
@@ -146,8 +144,5 @@ public abstract class PApplication extends Application{
         return instanceState.getBoolean(key);
     }
 
-    public ImageLoader getImageLoader() {
-        return imageLoader;
-    }
 
 }

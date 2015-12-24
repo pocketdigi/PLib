@@ -921,9 +921,13 @@ public class ImageUtil {
         Matrix matrix = new Matrix();;
         matrix.postRotate(angle);
         // 创建新的图片
-        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-        return resizedBitmap;
+        try {
+            Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+                    bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            return resizedBitmap;
+        }catch (Error e) {
+        }
+        return bitmap;
     }
 
     /**
@@ -957,7 +961,9 @@ public class ImageUtil {
             e.printStackTrace();
         }
         newbitmap.recycle();
-        cbitmap.recycle();
+        if(!cbitmap.isRecycled()) {
+            cbitmap.recycle();
+        }
     }
 
     /**

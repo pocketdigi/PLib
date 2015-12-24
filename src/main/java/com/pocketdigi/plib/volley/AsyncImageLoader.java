@@ -64,6 +64,7 @@ public class AsyncImageLoader extends ImageLoader{
     {
         readImageRequestConcurrentHashMap.clear();
         requestQueue.stop();
+        requestQueue=null;
         instance=null;
     }
 
