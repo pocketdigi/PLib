@@ -4,7 +4,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 /**
@@ -30,5 +32,9 @@ public class CustomDraweeView extends SimpleDraweeView{
 
     public void setImageResourceId(@DrawableRes int resId) {
         setImageURI(Uri.parse("res://" +resId));
+    }
+
+    public void setScaleType(ScalingUtils.ScaleType scaleType) {
+        this.getHierarchy().setActualImageScaleType(scaleType);
     }
 }
