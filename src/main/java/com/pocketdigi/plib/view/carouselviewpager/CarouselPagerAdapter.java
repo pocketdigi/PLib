@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.ImageView;
 
-import com.android.volley.toolbox.NetworkImageView;
+import com.facebook.drawee.drawable.ScalingUtils;
 import com.pocketdigi.plib.core.PApplication;
+import com.pocketdigi.plib.view.CustomDraweeView;
 import com.pocketdigi.plib.view.IButtonData;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
  * Created by fhp on 15/10/26.
  */
 public class CarouselPagerAdapter extends PagerAdapter {
-    private SparseArray<NetworkImageView> viewSparseArray;
+    private SparseArray<CustomDraweeView> viewSparseArray;
     List<IButtonData> data;
     int realCount = 0;
     ImageView.ScaleType scaleType=ImageView.ScaleType.FIT_XY;
@@ -58,14 +59,15 @@ public class CarouselPagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         //对ViewPager页号求模取出View列表中要显示的项
         final int realPosition = position % data.size();
-        NetworkImageView imageView = viewSparseArray.get(realPosition);
+        CustomDraweeView draweeView = viewSparseArray.get(realPosition);
         final IButtonData buttonData = data.get(realPosition);
-        if (imageView == null) {
-            imageView = new NetworkImageView(container.getContext());
+        if (draweeView == null) {
+            draweeView = new CustomDraweeView(container.getContext());
             ViewPager.LayoutParams params = new ViewPager.LayoutParams();
-            imageView.setLayoutParams(params);
-            imageView.setScaleType(scaleType);
-            imageView.setOnClickListener(new View.OnClickListener() {
+            draweeView.setLayoutParams(params);
+            draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
+
+            draweeView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int dataPosition = realPosition;
@@ -79,18 +81,17 @@ public class CarouselPagerAdapter extends PagerAdapter {
                     PApplication.getInstance().postEvent(new CarouselItemClickEvent(dataPosition, buttonData,CarouselPagerAdapter.this));
                 }
             });
-            viewSparseArray.put(realPosition, imageView);
+            viewSparseArray.put(realPosition, draweeView);
         }
-        imageView.setImageUrl(buttonData.getImageUrl());
+        draweeView.setImageUrl(buttonData.getImageUrl());
         //如果View已经在之前添加到了一个父组件，则必须先remove，否则会抛出IllegalStateException。
-        ViewParent vp = imageView.getParent();
+        ViewParent vp = draweeView.getParent();
         if (vp != null) {
             ViewGroup parent = (ViewGroup) vp;
-            parent.removeView(imageView);
+            parent.removeView(draweeView);
         }
-
-        container.addView(imageView);
-        return imageView;
+        container.addView(draweeView);
+        return draweeView;
     }
 
     public void setData(List<? extends IButtonData> banners) {

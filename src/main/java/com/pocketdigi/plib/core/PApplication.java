@@ -8,6 +8,7 @@ import android.os.Bundle;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.pocketdigi.plib.util.DeviceUtils;
 import com.pocketdigi.plib.volley.AsyncImageLoader;
 import com.pocketdigi.plib.volley.L2LRUImageCache;
@@ -42,9 +43,7 @@ public abstract class PApplication extends Application{
         services=new ArrayList<>();
         instance=this;
         instanceState=new Bundle();
-        RequestQueue imageRequestQueue= Volley.newRequestQueue(this);
-        imageRequestQueue.start();
-
+        Fresco.initialize(this);
     }
 
     void activityCreate(Activity activity)
