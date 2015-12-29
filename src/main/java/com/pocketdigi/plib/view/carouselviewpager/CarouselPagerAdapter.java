@@ -1,6 +1,7 @@
 package com.pocketdigi.plib.view.carouselviewpager;
 
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.SparseArray;
@@ -25,7 +26,9 @@ public class CarouselPagerAdapter extends PagerAdapter {
     private SparseArray<CustomDraweeView> viewSparseArray;
     List<IButtonData> data;
     int realCount = 0;
-    ImageView.ScaleType scaleType=ImageView.ScaleType.FIT_XY;
+    @DrawableRes
+    int placeHolderImage=0;
+    ScalingUtils.ScaleType placeHolderImageScaleType=ScalingUtils.ScaleType.FIT_XY,scaleType=ScalingUtils.ScaleType.FIT_XY;
     public CarouselPagerAdapter() {
         this.viewSparseArray = new SparseArray<>();
         this.data = new ArrayList<>();
@@ -65,8 +68,10 @@ public class CarouselPagerAdapter extends PagerAdapter {
             draweeView = new CustomDraweeView(container.getContext());
             ViewPager.LayoutParams params = new ViewPager.LayoutParams();
             draweeView.setLayoutParams(params);
-            draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FIT_XY);
-
+            draweeView.getHierarchy().setActualImageScaleType(scaleType);
+            if(placeHolderImage!=0) {
+                draweeView.getHierarchy().setPlaceholderImage(container.getResources().getDrawable(placeHolderImage),placeHolderImageScaleType);
+            }
             draweeView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -100,8 +105,28 @@ public class CarouselPagerAdapter extends PagerAdapter {
         notifyDataSetChanged();
     }
 
-    public void setScaleType(ImageView.ScaleType scaleType) {
+    public int getPlaceHolderImage() {
+        return placeHolderImage;
+    }
+
+    public void setPlaceHolderImage(@DrawableRes int placeHolderImage) {
+        this.placeHolderImage = placeHolderImage;
+    }
+
+    public ScalingUtils.ScaleType getScaleType() {
+        return scaleType;
+    }
+
+    public void setScaleType(ScalingUtils.ScaleType scaleType) {
         this.scaleType = scaleType;
+    }
+
+    public ScalingUtils.ScaleType getPlaceHolderImageScaleType() {
+        return placeHolderImageScaleType;
+    }
+
+    public void setPlaceHolderImageScaleType(ScalingUtils.ScaleType placeHolderImageScaleType) {
+        this.placeHolderImageScaleType = placeHolderImageScaleType;
     }
 
     /**

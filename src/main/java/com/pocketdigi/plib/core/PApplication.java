@@ -8,13 +8,19 @@ import android.os.Bundle;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.facebook.cache.disk.DiskCacheConfig;
+import com.facebook.common.internal.Supplier;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.cache.MemoryCacheParams;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.pocketdigi.plib.util.DeviceUtils;
+import com.pocketdigi.plib.util.RuntimeUtil;
 import com.pocketdigi.plib.volley.AsyncImageLoader;
 import com.pocketdigi.plib.volley.L2LRUImageCache;
 
 import de.greenrobot.event.EventBus;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.*;
 
@@ -43,7 +49,22 @@ public abstract class PApplication extends Application{
         services=new ArrayList<>();
         instance=this;
         instanceState=new Bundle();
-        Fresco.initialize(this);
+
+        DiskCacheConfig.Builder diskCacheConfigBuilder = DiskCacheConfig.newBuilder();
+        diskCacheConfigBuilder.setBaseDirectoryPath(new File(RuntimeUtil.getContextCacheDir(this)));
+        diskCacheConfigBuilder.setBaseDirectoryName("drawee");
+        diskCacheConfigBuilder.setMaxCacheSize(draweeMaxCacheSize());
+        diskCacheConfigBuilder.setMaxCacheSizeOnLowDiskSpace(draweeMaxCacheSizeInLowDiskSpace());
+        DiskCacheConfig diskCacheConfig = diskCacheConfigBuilder.build();
+
+        ImagePipelineConfig config = ImagePipelineConfig.newBuilder(this)
+                .setMainDiskCacheConfig(diskCacheConfig)
+                .setBitmapMemoryCacheParamsSupplier(getBitmapMemoryCacheParamSupplier())
+                .setEncodedMemoryCacheParamsSupplier(getEncodedMemoryCacheParamSupplier())
+                .build();
+
+
+        Fresco.initialize(this,config);
     }
 
     void activityCreate(Activity activity)
@@ -143,5 +164,46 @@ public abstract class PApplication extends Application{
         return instanceState.getBoolean(key);
     }
 
+    /**
+     * bitmap内存缓存参数
+     * @return
+     */
+    protected Supplier<MemoryCacheParams> getBitmapMemoryCacheParamSupplier() {
+        return new Supplier<MemoryCacheParams>() {
+            @Override
+            public MemoryCacheParams get() {
+                return new MemoryCacheParams(20*2014*1024,100,5*1024*1024,20,1024*1024);
+            }
+        };
+    }
+
+    /**
+     * 未解码图片的内存缓存
+     * @return
+     */
+    protected Supplier<MemoryCacheParams> getEncodedMemoryCacheParamSupplier() {
+        return new Supplier<MemoryCacheParams>() {
+            @Override
+            public MemoryCacheParams get() {
+                return new MemoryCacheParams(20*2014*1024,100,5*1024*1024,20,1024*1024);
+            }
+        };
+    }
+
+    /**
+     * 最大缓存大小,默认50M
+     * @return
+     */
+    protected long draweeMaxCacheSize() {
+        return 50*1024*1024;
+    }
+
+    /**
+     * 最大缓存大小，在磁盘空间不足时，默认10M
+     * @return
+     */
+    protected long draweeMaxCacheSizeInLowDiskSpace() {
+        return 10*1024*1024;
+    }
 
 }
