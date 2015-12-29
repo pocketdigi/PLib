@@ -5,11 +5,11 @@ PLib是一个Android应用开发库，集成了流行的开源库，整合一些
 
 整合开源库：
 -------------
-1.AndroidAnonations 3.2 <br />
-1.OrmLite 4.48<br />
-2.gson 2.3<br />
-3.eventbus 2.2.1<br />
-
+1.AndroidAnonations 3.3.2 <br />
+2.OrmLite 4.48<br />
+3.gson 2.3<br />
+4.eventbus 2.2.1<br />
+5.fresco 0.8.1 <br />
 
 功能:
 -------------
@@ -60,7 +60,7 @@ include ':app', ':plib'
 
 ```java
 apply plugin: 'com.neenbedankt.android-apt'
-def AAVersion = '3.2'
+def AAVersion = '3.3.2'
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':plib')
