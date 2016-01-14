@@ -3,6 +3,7 @@ package com.pocketdigi.plib.view;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.DrawableRes;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -24,7 +25,9 @@ public class CustomDraweeView extends SimpleDraweeView {
     }
 
     public void setImageUrl(String url) {
-        setImageURI(Uri.parse(url));
+        if(!TextUtils.isEmpty(url)) {
+            setImageURI(Uri.parse(url));
+        }
     }
 
     public void setImagePath(String path) {

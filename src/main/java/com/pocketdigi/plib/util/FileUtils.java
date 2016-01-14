@@ -216,13 +216,11 @@ public class FileUtils {
                 int length;
                 while ((byteread = inStream.read(buffer)) != -1) {
                     bytesum += byteread;
-                    System.out.println(bytesum);
                     fs.write(buffer, 0, byteread);
                 }
                 inStream.close();
             }
         } catch (Exception e) {
-            System.out.println("error  ");
             e.printStackTrace();
         }
     }

@@ -16,9 +16,11 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 
+import com.pocketdigi.plib.core.PApplication;
 import com.pocketdigi.plib.core.PLog;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -665,25 +667,41 @@ public class ImageUtil {
     }
 
     /**
-     * 有损压缩图片，不缩小图片分辨率,质量为60%
+     * 有损压缩图片，缩小图片分辨率,质量为quality
      * @param filePath
      * @return
      */
-    public static byte[] compressBitmap(String filePath) {
+    public static byte[] compressBitmap(String filePath,Bitmap.CompressFormat format,int quality,int maxWidth, int maxHeight) {
         Bitmap sourceBmp=BitmapFactory.decodeFile(filePath);
+        return  compressBitmap(sourceBmp,format,quality,maxWidth,maxHeight);
+    }
+
+    /**
+     * 有损压缩图片，缩小图片分辨率,质量为quality
+     * @return
+     */
+    public static byte[] compressBitmap(Bitmap sourceBmp,Bitmap.CompressFormat format,int quality,int maxWidth, int maxHeight) {
         if(sourceBmp!=null)
         {
             PLog.d(TAG, "原大小" + sourceBmp.getByteCount());
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            sourceBmp.compress(Bitmap.CompressFormat.JPEG, 60, baos);
-            sourceBmp.recycle();
-            byte[] bytes=baos.toByteArray();
+//            float scale = getCompressScale(sourceBmp.getWidth(), sourceBmp.getHeight(), maxWidth, maxHeight);
+//            Matrix matrix = new Matrix();
+//            matrix.postScale(scale, scale); //长和宽放大缩小的比例
+            Bitmap bitmap = scaleBitmap(sourceBmp, maxWidth, maxHeight);
+            byte[] bytes=bitmap2ByteArray(bitmap,format,quality);
+            bitmap.recycle();
             PLog.d(TAG, "压缩后大小"+bytes.length);
             return bytes;
         }else{
             return null;
         }
+    }
 
+
+    public static byte[] bitmap2ByteArray(Bitmap bmp,Bitmap.CompressFormat format,int quality) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(format, quality, baos);
+        return baos.toByteArray();
     }
 
     /**
@@ -702,8 +720,8 @@ public class ImageUtil {
         }
         float widthScale = (float) maxWidth / realWidth;
         float heightScale = (float) maxHeight / realHeight;
-        if (widthScale < 1 && heightScale < 1) {
-            return Math.max(widthScale, heightScale);
+        if (widthScale < 1 || heightScale < 1) {
+            return Math.min(widthScale, heightScale);
         }
         return 1;
     }
@@ -990,5 +1008,38 @@ public class ImageUtil {
 //        float targetHeight=bitmap.getHeight()*compressScale;
 //        Bitmap.createScaledBitmap(bitmap)
 //    }
+
+    public static void saveBitmap2File(Bitmap bmp, String filePath, Bitmap.CompressFormat format, int quality) {
+        saveBitmap2File(bmp,filePath,format,quality,0,0);
+    }
+
+
+    public static void saveBitmap2File(Bitmap bmp, String filePath, Bitmap.CompressFormat format, int quality,int maxWidth,int maxHeight) {
+        PLog.e(TAG, "保存图片到" +filePath);
+        File f = new File(filePath);
+        if (f.exists()) {
+            f.delete();
+        }
+        File parentFile = f.getParentFile();
+        if(!parentFile.exists()) {
+            parentFile.mkdirs();
+        }
+        try {
+            FileOutputStream out = new FileOutputStream(f);
+            if(maxWidth>0) {
+                bmp=scaleBitmap(bmp, maxWidth, maxHeight);
+            }
+            bmp.compress(format, quality, out);
+            out.flush();
+            out.close();
+            PLog.i(TAG, "保存成功");
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 }
