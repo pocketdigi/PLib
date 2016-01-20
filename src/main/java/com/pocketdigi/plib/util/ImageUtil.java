@@ -648,7 +648,7 @@ public class ImageUtil {
      * @return
      */
     public static Bitmap scaleBitmap(Bitmap bmp, int maxWidth, int maxHeight) {
-        if(maxWidth==0&&maxHeight==0) {
+        if(maxWidth==0||maxHeight==0) {
             return bmp;
         }
         float scale = getCompressScale(bmp.getWidth(), bmp.getHeight(), maxWidth, maxHeight);

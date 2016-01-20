@@ -141,7 +141,7 @@ public class RuntimeUtil {
             Intent shortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
             //快捷方式的名称
             shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
-            shortcut.putExtra("duplicate", false); //不允许重复创建
+//            shortcut.putExtra("duplicate", false); //不允许重复创建
             Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
             shortcutIntent.setClassName(mainActivity, mainActivity.getClass().getName());
             shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
