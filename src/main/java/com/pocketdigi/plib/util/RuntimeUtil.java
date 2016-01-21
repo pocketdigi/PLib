@@ -17,6 +17,7 @@ import android.view.View;
 
 import com.pocketdigi.plib.R;
 import com.pocketdigi.plib.core.PApplication;
+import com.pocketdigi.plib.core.PLog;
 
 /**
  * 获取运行时信息，如是否第一次运行，当前版本号等
@@ -125,32 +126,35 @@ public class RuntimeUtil {
      * @param mainActivity 主Activity
      */
     public static void addShortcut(Activity mainActivity, String appName, int iconResId) {
-        boolean isInstallShortcut = false;
-        final ContentResolver cr = mainActivity.getContentResolver();
-        final String AUTHORITY = "com.android.launcher.settings";
-        final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/favorites?notify=true");
-        Cursor c = cr.query(CONTENT_URI, new String[]{"title", "iconResource"}, "title=?",
-                new String[]{appName.trim()}, null);
-        if (c != null && c.getCount() > 0) {
-            isInstallShortcut = true;
-        }
-        if (c != null) {
-            c.close();
-        }
-        if (!isInstallShortcut) {
-            Intent shortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
-            //快捷方式的名称
-            shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
-//            shortcut.putExtra("duplicate", false); //不允许重复创建
-            Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
-            shortcutIntent.setClassName(mainActivity, mainActivity.getClass().getName());
-            shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-            //快捷方式的图标
-            Intent.ShortcutIconResource iconRes = Intent.ShortcutIconResource.fromContext(mainActivity, iconResId);
-            shortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconRes);
-            mainActivity.sendBroadcast(shortcut);
-        }
+        Intent shortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+        //快捷方式的名称
+        shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
+        shortcut.putExtra("duplicate", false); //不允许重复创建
+        Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
+        shortcutIntent.setClassName(mainActivity, mainActivity.getClass().getName());
+        shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        //快捷方式的图标.
+        Intent.ShortcutIconResource iconRes = Intent.ShortcutIconResource.fromContext(mainActivity, iconResId);
+        shortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconRes);
+        mainActivity.sendBroadcast(shortcut);
     }
+
+    /**
+     * 不兼容nexus 5 4.4.4
+     * @param mainActivity
+     * @param appName
+     */
+    public static void removeShortcut(Activity mainActivity, String appName) {
+        Intent shortcutInt = new Intent(Intent.ACTION_MAIN);
+        shortcutInt.setClassName(mainActivity, mainActivity.getClass().getName());
+        Intent removeInt = new Intent();
+        removeInt.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutInt);
+        removeInt.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName);
+        removeInt.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
+        removeInt.putExtra("duplicate", false);
+        mainActivity.getApplicationContext().sendBroadcast(removeInt);
+    }
+
 
     /**
      * 获取App可写目录,优先外部存储/sdcard/Android/data/packagename/files
@@ -181,7 +185,7 @@ public class RuntimeUtil {
      * @return
      */
     public static String getContextCacheDir(Context context) {
-        String filesDir=null;
+        String filesDir = null;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || !Environment.isExternalStorageRemovable()) {
             try {
@@ -189,7 +193,7 @@ public class RuntimeUtil {
             } catch (Exception e) {
                 try {
                     filesDir = context.getCacheDir().getPath();
-                }catch (Exception e1) {
+                } catch (Exception e1) {
                     e1.printStackTrace();
                 }
             }
@@ -236,7 +240,8 @@ public class RuntimeUtil {
     }
 
     /**
-     *截屏，包括状态栏
+     * 截屏，包括状态栏
+     *
      * @param activity
      * @return
      */
@@ -249,7 +254,7 @@ public class RuntimeUtil {
         view.setDrawingCacheEnabled(true);
         // 去掉状态栏
         Bitmap bmp = Bitmap.createBitmap(view.getDrawingCache(), 0,
-                0, screenSize[0], screenSize[1] );
+                0, screenSize[0], screenSize[1]);
         // 销毁缓存信息
         view.destroyDrawingCache();
         return bmp;
