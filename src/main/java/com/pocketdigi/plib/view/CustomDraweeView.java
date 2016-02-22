@@ -5,11 +5,14 @@ import android.net.Uri;
 import android.support.annotation.DrawableRes;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.pocketdigi.plib.core.PApplication;
+import com.pocketdigi.plib.core.PLog;
+import com.pocketdigi.plib.core.ViewHelper;
 
 /**
  * 增加几个直接设置路径的方法
@@ -18,10 +21,22 @@ import com.pocketdigi.plib.core.PApplication;
 public class CustomDraweeView extends SimpleDraweeView {
     public CustomDraweeView(Context context) {
         super(context);
+        init();
     }
 
     public CustomDraweeView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
+    }
+
+    private void init() {
+//        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                PLog.e(this,"onGlobalLayout: "+" width:"+getWidth());
+//                ViewHelper.removeOnGlobalLayoutListener(CustomDraweeView.this,this);
+//            }
+//        });
     }
 
     public void setImageUrl(String url) {
@@ -78,5 +93,10 @@ public class CustomDraweeView extends SimpleDraweeView {
                 break;
         }
         setScaleType(scaleType1);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
     }
 }

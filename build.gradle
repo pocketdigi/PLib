@@ -44,5 +44,4 @@ dependencies {
     compile 'com.android.support:support-v4:22.1.1'
     compile "org.androidannotations:androidannotations-api:$AAVersion"
     compile 'com.facebook.fresco:fresco:0.8.1'
-
 }

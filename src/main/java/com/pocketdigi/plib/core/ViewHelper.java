@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
 /**
  * Created by fhp on 15/10/27.
@@ -25,6 +26,19 @@ public class ViewHelper {
             view.setBackground(backgroundDrawable);
         }else{
             view.setBackgroundDrawable(backgroundDrawable);
+        }
+    }
+
+    /**
+     * 移除view的 OnGlobalLayoutListener
+     * @param v
+     * @param onGlobalLayoutListener
+     */
+    public static final void removeOnGlobalLayoutListener(View v, ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener) {
+        if(Build.VERSION.SDK_INT >= 16){
+            v.getViewTreeObserver().removeOnGlobalLayoutListener(onGlobalLayoutListener);
+        }else{
+            v.getViewTreeObserver().removeGlobalOnLayoutListener(onGlobalLayoutListener);
         }
     }
 }
