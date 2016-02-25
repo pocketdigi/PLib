@@ -47,14 +47,16 @@ public class CarouselHandler extends Handler{
         public void run() {
             if(isRunning) {
                 PLog.e("CarouselHandler", "滚动");
-                int currentItem = viewPager.getCurrentItem();
-                int count = viewPager.getAdapter().getCount();
-                int targetItem=currentItem + 1;
-                if(currentItem>=(count-1)){
-                    targetItem=count/2;
+                if(viewPager!=null) {
+                    int currentItem = viewPager.getCurrentItem();
+                    int count = viewPager.getAdapter().getCount();
+                    int targetItem = currentItem + 1;
+                    if (currentItem >= (count - 1)) {
+                        targetItem = count / 2;
+                    }
+                    viewPager.setCurrentItem(targetItem, true);
+                    postDelayed(this, delay);
                 }
-                viewPager.setCurrentItem(targetItem, true);
-                postDelayed(this, delay);
             }
         }
     };

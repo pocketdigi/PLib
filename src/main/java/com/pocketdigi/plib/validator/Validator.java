@@ -68,7 +68,7 @@ public class Validator {
     }
 
     /**
-     * 获取校验失败的提示
+     * 获取校验失败的提示，当不
      *
      * @return
      */
