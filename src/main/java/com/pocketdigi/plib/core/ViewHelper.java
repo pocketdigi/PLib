@@ -22,12 +22,19 @@ public class ViewHelper {
         }else{
             backgroundDrawable=view.getResources().getDrawable(resId);
         }
+        setBackgroundForView(view,backgroundDrawable);
+    }
+
+    public static final void setBackgroundForView(View view,Drawable drawable) {
         if(Build.VERSION.SDK_INT >= 16){
-            view.setBackground(backgroundDrawable);
+            view.setBackground(drawable);
         }else{
-            view.setBackgroundDrawable(backgroundDrawable);
+            view.setBackgroundDrawable(drawable);
         }
     }
+
+
+
 
     /**
      * 移除view的 OnGlobalLayoutListener
