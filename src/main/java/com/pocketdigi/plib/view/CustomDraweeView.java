@@ -1,6 +1,7 @@
 package com.pocketdigi.plib.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.net.Uri;
 import android.support.annotation.DrawableRes;
 import android.text.TextUtils;
@@ -10,15 +11,19 @@ import android.widget.ImageView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.pocketdigi.plib.R;
 import com.pocketdigi.plib.core.PApplication;
 import com.pocketdigi.plib.core.PLog;
 import com.pocketdigi.plib.core.ViewHelper;
+
+import org.androidannotations.annotations.AfterViews;
 
 /**
  * 增加几个直接设置路径的方法
  * Created by fhp on 15/12/25.
  */
 public class CustomDraweeView extends SimpleDraweeView {
+    String imageUrl;
     public CustomDraweeView(Context context) {
         super(context);
         init();
@@ -27,6 +32,11 @@ public class CustomDraweeView extends SimpleDraweeView {
     public CustomDraweeView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
+        TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CustomDraweeView, 0, 0);
+        imageUrl = typedArray.getString(R.styleable.CustomDraweeView_imageUrl);
+        if(imageUrl!=null&&imageUrl.startsWith("http")) {
+            setImageUrl(imageUrl);
+        }
     }
 
     private void init() {

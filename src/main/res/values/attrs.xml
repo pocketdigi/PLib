@@ -3,5 +3,7 @@
     <declare-styleable name="RoundCornerNetworkImageView">
         <attr name="radius" format="dimension" />
     </declare-styleable>
-
+    <declare-styleable name="CustomDraweeView">
+        <attr name="imageUrl" format="string" />
+    </declare-styleable>
 </resources>
