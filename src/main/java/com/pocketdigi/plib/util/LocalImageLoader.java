@@ -3,9 +3,7 @@ package com.pocketdigi.plib.util;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.pocketdigi.plib.core.PAsyncTask;
-import com.pocketdigi.plib.volley.L2LRUImageCache;
 
 /**
  * Created by fhp on 15/9/6.

@@ -5,24 +5,17 @@ import android.app.Application;
 import android.app.Service;
 import android.os.Bundle;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
 import com.facebook.cache.disk.DiskCacheConfig;
 import com.facebook.common.internal.Supplier;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.cache.MemoryCacheParams;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.pocketdigi.plib.util.DeviceUtils;
 import com.pocketdigi.plib.util.RuntimeUtil;
-import com.pocketdigi.plib.volley.AsyncImageLoader;
-import com.pocketdigi.plib.volley.L2LRUImageCache;
 
 import de.greenrobot.event.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.*;
 
 /**
  * Application基类
