@@ -8,7 +8,7 @@ PLib是一个Android应用开发库，集成了流行的开源库，整合一些
 -------------
 1.AndroidAnonations 4.0.0 <br />
 2.gson 2.3<br />
-3.eventbus 2.2.1<br />
+3.eventbus 2.6.2<br />
 4.fresco 0.8.1 <br />
 5.Volley <br />
 
@@ -24,8 +24,22 @@ PLib是一个Android应用开发库，集成了流行的开源库，整合一些
 ---------
 准备将目前几个应用中使用的单Activity开发架构整合进来，一个应用只有一个Activity,界面基于Fragment实现.
 
-使用方法：
------
+使用方法有两种:
+--------
+
+### 一、下载Demo模板项目：
+
+[下载附件中的Demo项目，改包名，直接使用。](http://git.oschina.net/pocketdigi/PLib/attach_files)
+Demo包含的内容:
+
+#####  1、PageManager
+Demo项目使用单Activity架构，UI使用Fragment展示，通过PageManger控制。
+#####  2、Http接口数据获取,Android DataBinding框架使用
+#####  3、友盟统计集成
+#####  4、其他一些小功能
+
+### 二、作为子模块加到现有项目
+
 #####1、切到项目(仅支持Android Studio项目)根目录下,添加子模块<br />
 git submodule add -b v1.5 https://git.oschina.net/pocketdigi/PLib.git plib <br />
 #####2、修改项目的build.gradle
