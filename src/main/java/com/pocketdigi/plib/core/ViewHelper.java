@@ -1,10 +1,23 @@
 package com.pocketdigi.plib.core;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewTreeObserver;
+
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
+import com.facebook.imagepipeline.image.CloseableImage;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.pocketdigi.plib.util.UiThreadExecutor;
 
 /**
  * Created by fhp on 15/10/27.
@@ -15,7 +28,7 @@ public class ViewHelper {
      * @param view
      * @param resId
      */
-    public static final void setBackgroundForView(View view,@DrawableRes int resId) {
+    public static void setBackgroundForView(View view,@DrawableRes int resId) {
         Drawable backgroundDrawable;
         if(Build.VERSION.SDK_INT >= 21){
             backgroundDrawable=view.getResources().getDrawable(resId, null);
@@ -25,12 +38,33 @@ public class ViewHelper {
         setBackgroundForView(view,backgroundDrawable);
     }
 
-    public static final void setBackgroundForView(View view,Drawable drawable) {
+    public static void setBackgroundForView(View view,Drawable drawable) {
         if(Build.VERSION.SDK_INT >= 16){
             view.setBackground(drawable);
         }else{
             view.setBackgroundDrawable(drawable);
         }
+    }
+
+    public static void setBackgroundForView(final View view,String imageUrl) {
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        ImageRequest imageRequest=ImageRequest.fromUri(Uri.parse(imageUrl));
+
+        DataSource<CloseableReference<CloseableImage>>
+                dataSource = imagePipeline.fetchDecodedImage(imageRequest,view);
+
+        dataSource.subscribe(new BaseBitmapDataSubscriber() {
+            @Override
+            public void onNewResultImpl(@Nullable Bitmap bitmap) {
+                ViewHelper.setBackgroundForView(view,new BitmapDrawable(view.getResources(),bitmap));
+            }
+
+            @Override
+            public void onFailureImpl(DataSource dataSource) {
+                // No cleanup required here.
+            }
+        }, new UiThreadExecutor());
+
     }
 
 
