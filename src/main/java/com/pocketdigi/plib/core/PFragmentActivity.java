@@ -3,6 +3,8 @@ package com.pocketdigi.plib.core;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
+import com.pocketdigi.plib.util.RuntimeUtil;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -21,6 +23,7 @@ public abstract class PFragmentActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         PApplication.getInstance().activityCreate(this);
         backPressedListeners=new HashSet<>();
+        RuntimeUtil.readSetting();
     }
 
     @Override
