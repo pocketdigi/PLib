@@ -9,6 +9,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
 
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
@@ -65,6 +66,26 @@ public class ViewHelper {
             }
         }, new UiThreadExecutor());
 
+    }
+
+    public static void setImageUrlForImageView(final ImageView imageView, String imageUrl) {
+        ImagePipeline imagePipeline = Fresco.getImagePipeline();
+        ImageRequest imageRequest=ImageRequest.fromUri(Uri.parse(imageUrl));
+
+        DataSource<CloseableReference<CloseableImage>>
+                dataSource = imagePipeline.fetchDecodedImage(imageRequest,imageView);
+
+        dataSource.subscribe(new BaseBitmapDataSubscriber() {
+            @Override
+            public void onNewResultImpl(@Nullable Bitmap bitmap) {
+                imageView.setImageBitmap(bitmap);
+            }
+
+            @Override
+            public void onFailureImpl(DataSource dataSource) {
+                // No cleanup required here.
+            }
+        }, new UiThreadExecutor());
     }
 
 

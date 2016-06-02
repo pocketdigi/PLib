@@ -30,4 +30,5 @@ dependencies {
     compile "org.androidannotations:androidannotations-api:$AAVersion"
     compile 'com.facebook.fresco:fresco:0.8.1'
     compile 'com.google.code.gson:gson:2.6.2'
+    compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
 }
