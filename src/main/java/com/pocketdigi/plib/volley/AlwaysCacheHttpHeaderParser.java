@@ -42,18 +42,14 @@ public class AlwaysCacheHttpHeaderParser {
         Map<String, String> headers = response.headers;
 
         long serverDate = 0;
-        long serverExpires = 0;
-        long softExpire = 0;
-        boolean hasCacheControl = false;
-
-        String serverEtag = headers.get("ETag");
-        String headerValue;
-
-        headerValue = headers.get("Date");
+        String headerValue = headers.get("Date");
         if (headerValue != null) {
             serverDate = parseDateAsEpoch(headerValue);
         }
-        softExpire = now + maxAge;
+
+        String serverEtag = headers.get("ETag");
+
+        long softExpire = now + maxAge;
 
         Cache.Entry entry = new Cache.Entry();
         entry.data = response.data;
@@ -79,24 +75,4 @@ public class AlwaysCacheHttpHeaderParser {
         }
     }
 
-    /**
-     * Returns the charset specified in the Content-Type of this header,
-     * or the HTTP default (ISO-8859-1) if none can be found.
-     */
-    public static String parseCharset(Map<String, String> headers) {
-        String contentType = headers.get(HTTP.CONTENT_TYPE);
-        if (contentType != null) {
-            String[] params = contentType.split(";");
-            for (int i = 1; i < params.length; i++) {
-                String[] pair = params[i].trim().split("=");
-                if (pair.length == 2) {
-                    if (pair[0].equals("charset")) {
-                        return pair[1];
-                    }
-                }
-            }
-        }
-
-        return HTTP.DEFAULT_CONTENT_CHARSET;
-    }
 }
