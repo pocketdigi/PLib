@@ -107,7 +107,8 @@
     <orderEntry type="library" exported="" name="imagepipeline-0.8.1" level="project" />
     <orderEntry type="library" exported="" name="androidannotations-api-4.0.0" level="project" />
     <orderEntry type="library" exported="" name="EventBus-2.4.0" level="project" />
-    <orderEntry type="library" exported="" name="volley-1.0.0" level="project" />
+    <orderEntry type="library" exported="" name="okio-1.8.0" level="project" />
+    <orderEntry type="library" exported="" name="okhttp-3.3.1" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-23.3.0" level="project" />
     <orderEntry type="library" exported="" name="gson-2.6.2" level="project" />
     <orderEntry type="library" exported="" name="fbcore-0.8.1" level="project" />
@@ -116,6 +117,5 @@
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-23.3.0" level="project" />
     <orderEntry type="library" exported="" name="httpmime-4.2.3" level="project" />
-    <orderEntry type="library" exported="" name="org.apache.http.legacy-android-23" level="project" />
   </component>
 </module>
