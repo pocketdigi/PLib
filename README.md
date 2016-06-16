@@ -38,7 +38,7 @@ Demo项目使用单Activity架构，UI使用Fragment展示，通过PageManger控
 ### 二、作为子模块加到现有项目
 
 #####1、切到项目(仅支持Android Studio项目)根目录下,添加子模块<br />
-git submodule add -b v1.5 https://git.oschina.net/pocketdigi/PLib.git plib <br />
+git submodule add -b master git@github.com:pocketdigi/PLib.git plib <br />
 #####2、修改项目的build.gradle
 
 ```java
