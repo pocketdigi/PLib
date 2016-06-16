@@ -12,7 +12,8 @@ import com.facebook.imagepipeline.cache.MemoryCacheParams;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.pocketdigi.plib.util.RuntimeUtil;
 
-import de.greenrobot.event.EventBus;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
