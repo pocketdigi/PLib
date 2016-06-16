@@ -106,7 +106,7 @@ public class PLog {
         if (TextUtils.isEmpty(msg))
             return 0;
         if (DEBUG)
-            return Log.e(obj.getClass().getSimpleName(), msg);
+            return Log.e(obj.getClass().getName(), msg);
         return 0;
     }
 
@@ -114,7 +114,7 @@ public class PLog {
         if (TextUtils.isEmpty(msg))
             return 0;
         if (DEBUG)
-            return Log.d(obj.getClass().getSimpleName(), msg);
+            return Log.d(obj.getClass().getName(), msg);
         return 0;
     }
 
@@ -122,7 +122,7 @@ public class PLog {
         if (TextUtils.isEmpty(msg))
             return 0;
         if (DEBUG)
-            return Log.v(obj.getClass().getSimpleName(), msg);
+            return Log.v(obj.getClass().getName(), msg);
         return 0;
     }
 
@@ -130,13 +130,13 @@ public class PLog {
         if (TextUtils.isEmpty(msg))
             return 0;
         if (DEBUG)
-            return Log.w(obj.getClass().getSimpleName(), msg);
+            return Log.w(obj.getClass().getName(), msg);
         return 0;
     }
 
     public static int d(Object obj, Object msgObj) {
         if (DEBUG)
-            return Log.d(obj.getClass().getSimpleName(), msgObj.toString());
+            return Log.d(obj.getClass().getName(), msgObj.toString());
         return 0;
     }
 
