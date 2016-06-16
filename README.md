@@ -17,7 +17,7 @@ PLib是一个Android应用开发库，集成了流行的开源库，整合一些
 3.Toast封装<br />
 4.Log封装<br />
 5.其他一些常用Utils(md5,DES,日期处理,字符串处理,图片处理,网络判断,首次运行检测,版本号比较等)<br />
-6.CarouselViewPager 轮播幻灯片
+6.CarouselViewPager 轮播幻灯片<br />
 7.BoldTextView 加粗的TextView
 ...
 
