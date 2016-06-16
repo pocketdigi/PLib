@@ -86,7 +86,6 @@ public class DESUtil {
      * @param key
      * @param data
      * @return
-     * @throws Exception
      */
     public static String decodeValue(String key, String data) {
         byte[] datas;

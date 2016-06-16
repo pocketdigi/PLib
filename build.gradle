@@ -32,3 +32,31 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.jakewharton:disklrucache:2.0.2'
 }
+
+ext {
+    bintrayRepo = 'maven'////bintray上的仓库名，一般为maven
+    bintrayName = 'PLib'//bintray上的项目名
+
+    publishedGroupId = 'com.pocketdigi'//JCenter的GroupId
+    artifact = 'plib'//JCenter的ArtifactId
+
+    siteUrl = 'https://github.com/pocketdigi/PLib'
+    gitUrl = 'https://github.com/pocketdigi/PLib.git'
+
+    libraryVersion = '1.6.1'//版本号
+    libraryName = 'PLib'//项目名字，没什么用
+    libraryDescription = 'A Library for Android developer'//项目描述，没什么用
+
+    //开发者信息
+    developerId = 'pocketdigi'
+    developerName = 'Exception'
+    developerEmail = 'webmaster@pocketdigi.com'
+
+    //以上所有信息自行修改，以下不变
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+apply from:'install.gradle'
+apply from:'bintray.gradle'

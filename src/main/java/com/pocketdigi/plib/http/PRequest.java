@@ -1,9 +1,12 @@
 package com.pocketdigi.plib.http;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.StringDef;
 import android.webkit.MimeTypeMap;
 
 import com.google.gson.Gson;
+import com.pocketdigi.plib.util.UiThreadExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +35,8 @@ public class PRequest<T> implements Callback {
     PResponseListener<T> responseListener;
     Class<T> responseType;
     Call call;
+    Handler handler;
+
     public PRequest(@METHOD String method, String url, PResponseListener<T> responseListener, Class<T> responseType) {
         this.responseListener = responseListener;
         this.method = method;
@@ -39,6 +44,7 @@ public class PRequest<T> implements Callback {
 
         builder = new Request.Builder();
         builder.url(url);
+        handler = new Handler(Looper.getMainLooper());
     }
 
     public PRequest(String url, PResponseListener<T> responseListener, Class<T> responseType) {
@@ -83,7 +89,7 @@ public class PRequest<T> implements Callback {
             Set<String> keySet = params.keySet();
             for (String key : keySet) {
                 String value = params.get(key);
-                bodyBuilder.add(key,value);
+                bodyBuilder.add(key, value);
             }
             requestBody = bodyBuilder.build();
         }
@@ -95,28 +101,45 @@ public class PRequest<T> implements Callback {
     /**
      * 取消请求
      */
-    public void cancel(){
-        if(call!=null) {
+    public void cancel() {
+        if (call != null) {
             call.cancel();
         }
     }
 
 
     @Override
-    public void onFailure(Call call, IOException e) {
-        responseListener.onError(this, e);
+    public void onFailure(Call call, final IOException e) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                responseListener.onError(PRequest.this, e);
+            }
+        });
+
     }
 
     @Override
     public void onResponse(Call call, Response response) throws IOException {
-        String responseText = response.body().string();
+        final String responseText = response.body().string();
         if (responseType == String.class) {
-            responseListener.onResponse(this, (T) responseText);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    responseListener.onResponse(PRequest.this, (T) responseText);
+                }
+            });
+
         } else {
             //
             Gson gson = new Gson();
-            T obj = gson.fromJson(responseText, responseType);
-            responseListener.onResponse(this, obj);
+            final T obj = gson.fromJson(responseText, responseType);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    responseListener.onResponse(PRequest.this, obj);
+                }
+            });
         }
     }
 

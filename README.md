@@ -21,80 +21,22 @@ PLib是一个Android应用开发库，集成了流行的开源库，整合一些
 7.BoldTextView 加粗的TextView
 ...
 
-使用方法有两种:
+使用方法:
 --------
+```java
+ compile 'com.pocketdigi:plib:1.6'
+```
+Application继承PApplication,Activity继承PFragmentActivity。
 
-### 一、下载Demo模板项目：
+###Demo模板项目：
 
 [参考Demo项目，导入Android Studio,Rebuild Project,改包名，直接使用。](http://git.oschina.net/pocketdigi/PLibDemo)
 Demo包含的内容:
-
 #####  1、PageManager
 Demo项目使用单Activity架构，UI使用Fragment展示，通过PageManger控制。
 #####  2、Http接口数据获取,Android DataBinding框架使用
 #####  3、友盟统计集成
 #####  4、其他一些小功能
-
-### 二、作为子模块加到现有项目
-
-#####1、切到项目(仅支持Android Studio项目)根目录下,添加子模块<br />
-git submodule add -b master git@github.com:pocketdigi/PLib.git plib <br />
-#####2、修改项目的build.gradle
-
-```java
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        jcenter()
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
-```
-####3、修改项目的settings.gradle
-
-```java
-include ':app', ':plib'
-```
-
-将plib模块加进来
-####4、修改app模块的build.gradle
-
-```java
-apply plugin: 'com.neenbedankt.android-apt'
-def AAVersion = '4.0.0'
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':plib')
-    apt "org.androidannotations:androidannotations:$AAVersion"
-    compile 'com.android.support:appcompat-v7:23.2.1'
-    compile 'com.android.support:cardview-v7:23.2.1'
-    compile 'com.android.support:recyclerview-v7:23.2.1'
-}
-
-apt {
-    arguments {
-        resourcePackageName android.defaultConfig.applicationId
-        androidManifestFile variant.outputs[0].processResources.manifestFile
-    }
-}
-```
-
-完成后，可以使用标准的AndroidAnnotations注解开发。Application继承PApplication,Activity继承PFragmentActivity.<br />
 
 ###网络请求
 ####v1.6开始不再使用volley,而是通过封装OKHttp实现网络请求.
