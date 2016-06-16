@@ -54,6 +54,7 @@ PResponseListener<String>
 的实例,如果PResponseListener的泛型是String,则直接不处理返回字符串，如果是其他类型，则通过GSON转换成对象。
 
 **POST:**
+
 ```java
     public static void post(PResponseListener<String> listener) {
         PRequest<String> request=new PRequest<>(PRequest.POST, API_PREFIX+"add", listener,String.class);
@@ -62,7 +63,9 @@ PResponseListener<String>
         PHttp.getInstance().addRequest(request);
     }
 ```
+
 **POST Json**
+
 ```java
    public static void postObject(Person person,PResponseListener<String> listener) {
         PRequest<String> request=new PRequest<>(PRequest.POST,  API_PREFIX+"add", listener,String.class);
@@ -71,7 +74,9 @@ PResponseListener<String>
     }
 ```
 通过Gson将对象转成json放在request body里发送
+
 **上传**
+
 ```java
     public static PUploadRequest upload(String filePath,UploadListener<String> listener) {
         PUploadRequest<String> request=new PUploadRequest<>(API_PREFIX+"upload","file",filePath, listener,String.class);
@@ -79,7 +84,9 @@ PResponseListener<String>
         return request;
     }
 ```
+
 **下载**
+
 ```java
     public static PDownFileRequest downloadFile(String url, String savePath, DownProgressListener listener) {
         PDownFileRequest pDownFileRequest = new PDownFileRequest(url, savePath,listener);
