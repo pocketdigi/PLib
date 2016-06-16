@@ -30,12 +30,13 @@ Application继承PApplication,Activity继承PFragmentActivity。
 
 ###Demo模板项目：
 
-[参考Demo项目，导入Android Studio,Rebuild Project,改包名，直接使用。](http://git.oschina.net/pocketdigi/PLibDemo)
+[参考Demo项目，导入Android Studio,Rebuild Project,改包名，直接使用。](https://github.com/pocketdigi/PLibDemo)
 Demo包含的内容:
 #####  1、PageManager
 Demo项目使用单Activity架构，UI使用Fragment展示，通过PageManger控制。
 #####  2、Http接口数据获取,Android DataBinding框架使用
 #####  3、友盟统计集成
+#####  4、JNI Http请求签名
 #####  4、其他一些小功能
 
 ###网络请求
