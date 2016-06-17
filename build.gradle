@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 16
-        versionName "1.6"
+        versionCode 17
+        versionName "1.6.1"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
@@ -43,7 +43,7 @@ ext {
     siteUrl = 'https://github.com/pocketdigi/PLib'
     gitUrl = 'https://github.com/pocketdigi/PLib.git'
 
-    libraryVersion = '1.6'//版本号
+    libraryVersion = '1.6.1'//版本号
     libraryName = 'PLib'//项目名字，没什么用
     libraryDescription = 'A Library for Android developer'//项目描述，没什么用
 

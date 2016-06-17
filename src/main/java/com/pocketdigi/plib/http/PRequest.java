@@ -13,58 +13,81 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.TreeMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.internal.framed.Header;
 
 /**
  * Created by Exception on 16/6/12.
  */
 public class PRequest<T> implements Callback {
-    Request.Builder builder;
+    protected Request.Builder builder;
     String method;
-    RequestBody requestBody;
-    HashMap<String, String> params;
-    Object postObject;
-    PResponseListener<T> responseListener;
-    Class<T> responseType;
-    Call call;
-    Handler handler;
-
+    protected RequestBody requestBody;
+    protected TreeMap<String, String> params;
+    protected Object postObject;
+    protected PResponseListener<T> responseListener;
+    protected Class<T> responseType;
+    protected Call call;
+    protected Handler handler;
+    protected TreeMap<String,String> headerMap;
+    protected String url;
     public PRequest(@METHOD String method, String url, PResponseListener<T> responseListener, Class<T> responseType) {
         this.responseListener = responseListener;
         this.method = method;
         this.responseType = responseType;
-
         builder = new Request.Builder();
         builder.url(url);
         handler = new Handler(Looper.getMainLooper());
+        this.url=url;
     }
 
     public PRequest(String url, PResponseListener<T> responseListener, Class<T> responseType) {
         this(GET, url, responseListener, responseType);
-
     }
 
     public PRequest(String url) {
         this(GET, url, null, null);
     }
 
-
+    /**
+     * 添加 header
+     * @param key header key
+     * @param value header value
+     */
     public void addHeader(String key, String value) {
-        builder.addHeader(key, value);
+        if(headerMap==null)
+            headerMap=new TreeMap<>();
+        headerMap.put(key,value);
     }
 
+    public TreeMap<String, String> getHeaders(){
+        return headerMap;
+    }
+
+
+    /**
+     * 添加POST参数
+     * @param key 参数 key
+     * @param value 参数 value
+     */
     public void addParam(String key, String value) {
         if (params == null)
-            params = new HashMap<>();
+            params = new TreeMap<>();
         params.put(key, value);
+    }
+
+    public TreeMap<String, String> getParams() {
+        return params;
     }
 
     public Call getCall() {
@@ -93,6 +116,7 @@ public class PRequest<T> implements Callback {
             }
             requestBody = bodyBuilder.build();
         }
+        builder.headers(Headers.of(headerMap));
         builder.method(method, requestBody);
         builder.tag(this);
         return builder.build();
