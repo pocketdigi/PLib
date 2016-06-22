@@ -1,6 +1,8 @@
 package com.pocketdigi.plib.core;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -8,14 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pocketdigi.plib.util.PermissionUtil;
+
 import org.androidannotations.annotations.EFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by fhp on 14-9-1.
  */
 public abstract class PFragment extends Fragment implements OnBackPressedListener {
     PFragmentActivity parentActivity;
-    boolean isFirstEnter=true;
     int enterCount=0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,5 +114,37 @@ public abstract class PFragment extends Fragment implements OnBackPressedListene
     @Override
     public boolean onBackPressed() {
         return false;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode== PermissionUtil.REQUEST_CODE_ALL) {
+            List<String> deniedPermissions = new ArrayList<>();
+            for (int i = 0; i < grantResults.length; i++) {
+                if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    deniedPermissions.add(permissions[i]);
+                }
+            }
+            if(deniedPermissions.size()>0) {
+                onPermissionDenied(deniedPermissions);
+            }
+        }
+        PLog.d(this,permissions);
+        PLog.d(this,grantResults);
+    }
+
+    /**
+     * Manifest里声明的权限被拒绝时会调用
+     * @param permissions
+     */
+    protected void onPermissionDenied(List<String> permissions){
+        StringBuilder stringBuilder=new StringBuilder();
+        for(String permission:permissions) {
+            stringBuilder.append(permission).append(" ");
+        }
+        stringBuilder.append("权限被拒绝");
+        PLog.e(this,stringBuilder.toString());
     }
 }

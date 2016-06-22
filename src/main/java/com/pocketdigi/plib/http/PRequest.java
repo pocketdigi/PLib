@@ -116,7 +116,9 @@ public class PRequest<T> implements Callback {
             }
             requestBody = bodyBuilder.build();
         }
-        builder.headers(Headers.of(headerMap));
+        if(headerMap!=null) {
+            builder.headers(Headers.of(headerMap));
+        }
         builder.method(method, requestBody);
         builder.tag(this);
         return builder.build();

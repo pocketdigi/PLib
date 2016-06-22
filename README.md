@@ -2,6 +2,13 @@ PLib
 =================
 PLib是一个Android应用开发库，集成了流行的开源库，整合一些Util,可以帮助开发者更快开发应用.仅支持Android Studio。v1.6 开始移除Volley,网络请求使用OKHttp封装，简单高效。
 
+
+New Features：
+-------------
+> * 优化Android 6.0支持，PFragment自动检测AndroidManifest.xml中声明权限，如果有权限被拒绝，回调onPermissionDenied(List<String> permissions)
+> * PHttp改为主线程回调，onResponse里直接渲染页面
+
+
 整合开源库：
 -------------
 1.AndroidAnonations <br />
@@ -24,7 +31,7 @@ PLib是一个Android应用开发库，集成了流行的开源库，整合一些
 使用方法:
 --------
 ```java
- compile 'com.pocketdigi:plib:1.6'
+ compile 'com.pocketdigi:plib:1.6.1'
 ```
 Application继承PApplication,Activity继承PFragmentActivity。
 
